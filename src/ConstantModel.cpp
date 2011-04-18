@@ -23,7 +23,7 @@
  */
 
 #include <ms++/Error.h>
-#include "ms++/PeakParameter.h"
+#include "psf/PeakParameter.h"
 
 namespace ms
 {

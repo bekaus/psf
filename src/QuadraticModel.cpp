@@ -24,7 +24,7 @@
 
 #include <cmath>
 
-#include <ms++/PeakParameter.h>
+#include <psf/PeakParameter.h>
 
 using namespace ms;
 

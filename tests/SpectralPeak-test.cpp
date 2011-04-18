@@ -26,7 +26,7 @@
 
 #include <ms++/Error.h>
 #include <ms++/SparseSpectrum.h>
-#include <ms++/SpectralPeak.h>
+#include <psf/SpectralPeak.h>
 
 #include "unittest.hxx"
 

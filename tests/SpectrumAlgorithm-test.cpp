@@ -30,7 +30,7 @@
 #include <ms++/Error.h>
 #include <ms++/Log.h>
 #include <ms++/SparseSpectrum.h>
-#include <ms++/SpectrumAlgorithm.h>
+#include <psf/SpectrumAlgorithm.h>
 
 #include "testdata.h"
 

@@ -28,7 +28,7 @@
 #include "ms++/Log.h"
 
 #include "ms++/PeakShapeFunction.h"
-#include "ms++/PeakShapeFunctions.h"
+#include "psf/PeakShapeFunctions.h"
 
 #include "testdata.h"
 

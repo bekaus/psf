@@ -26,10 +26,10 @@
 #include <limits>
 
 #include <ms++/Log.h>
-#include <ms++/PeakParameter.h>
-#include <ms++/PeakShape.h>
+#include <psf/PeakParameter.h>
+#include <psf/PeakShape.h>
 #include <ms++/PeakShapeFunction.h>
-#include <ms++/PeakShapeFunctionTemplate.h>
+#include <psf/PeakShapeFunctionTemplate.h>
 
 #include "unittest.hxx"
 

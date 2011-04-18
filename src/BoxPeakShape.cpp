@@ -26,7 +26,7 @@
 #include <cmath>
 
 #include <ms++/Error.h>
-#include <ms++/PeakShape.h>
+#include "psf/PeakShape.h"
 
 using namespace ms;
 

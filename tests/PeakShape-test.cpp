@@ -26,7 +26,7 @@
 #include <iostream>
 
 #include <ms++/Error.h>
-#include <ms++/PeakShape.h>
+#include "psf/PeakShape.h"
 
 #include "unittest.hxx"
 

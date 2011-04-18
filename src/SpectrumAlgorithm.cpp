@@ -23,7 +23,7 @@
  *
  */
 
-#include <ms++/SpectrumAlgorithm.h>
+#include "psf/SpectrumAlgorithm.h"
 
 #include <algorithm>
 #include <utility>
@@ -32,7 +32,7 @@
 #include <ms++/Error.h>
 #include <ms++/Log.h>
 #include <ms++/SparseSpectrum.h>
-#include <ms++/SpectralPeak.h>
+#include <psf/SpectralPeak.h>
 
 using namespace ms;
 

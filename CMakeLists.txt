@@ -37,11 +37,20 @@
             SET(${DEFINE} "ms::logINFO")
         ENDIF(${LOGGING_LEVEL} STREQUAL "NO_LOGGING")
     ENDMACRO(LOGGING_LEVEL_TO_DEFINE)
+
+
+
+##
+# require CMake 2.6
+##
+    CMAKE_MINIMUM_REQUIRED(VERSION 2.6)
+
+
    
 ##
 # prerequisites
 ##
-    PROJECT(MSPP)
+    PROJECT(PSF)
 
     # setup testing
     ENABLE_TESTING()
@@ -56,12 +65,12 @@
 	        FORCE)
     ENDIF(NOT CMAKE_BUILD_TYPE)
 
+    CONFIGURE_FILE(
+        ${CMAKE_CURRENT_SOURCE_DIR}/cmake/config.h.cmake 
+        ${PSF_BINARY_DIR}/include/ms++/config.h
+    )
 
-##
-# require CMake 2.6
-##
-    CMAKE_MINIMUM_REQUIRED(VERSION 2.6)
-    SET(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules)
+
 
 ##
 # build options
@@ -124,11 +133,11 @@
 # includes paths
 ##
     INCLUDE_DIRECTORIES(
-	    ${MSPP_BINARY_DIR}
-        ${MSPP_BINARY_DIR}/include
-	    ${MSPP_SOURCE_DIR}
-	    ${MSPP_SOURCE_DIR}/src
-	    ${MSPP_SOURCE_DIR}/include
+	    ${PSF_BINARY_DIR}
+        ${PSF_BINARY_DIR}/include
+	    ${PSF_SOURCE_DIR}
+	    ${PSF_SOURCE_DIR}/src
+	    ${PSF_SOURCE_DIR}/include
         ${VIGRA_INCLUDE}
     )
 

@@ -26,7 +26,7 @@
 
 #include <ms++/config.h>
 #include <ms++/Error.h>
-#include <ms++/PeakParameter.h>
+#include <psf/PeakParameter.h>
 
 #include "testdata.h"
 

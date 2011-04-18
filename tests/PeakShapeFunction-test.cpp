@@ -28,9 +28,8 @@
 #include "ms++/Log.h"
 
 #include "ms++/PeakShapeFunction.h"
-#include <ms++/PeakShapeFunctions.h>
-#include "ms++/OrbiBoxPeakShapeFunction.h"
-#include "ms++/TOFPeakShapeFunction.h"
+#include "psf/PeakShapeFunctions.h"
+
 
 struct PsfTestSuite : vigra::test_suite {
     PsfTestSuite() : vigra::test_suite("PeakShapeFunction") {
@@ -92,8 +91,6 @@ struct PsfTestSuite : vigra::test_suite {
         MSPP_LOG(ms::logINFO) << "Testing the getType() functions.";
         shouldEqual(ms::GaussianPeakShapeFunction().getType().toEnum(), ms::gaussian);
         shouldEqual(ms::OrbitrapPeakShapeFunction().getType().toEnum(), ms::orbi);
-        shouldEqual(ms::OrbiBoxPeakShapeFunction(0.1).getType().toEnum(), ms::orbiBox);
-        shouldEqual(ms::TOFPeakShapeFunction(0.1, 0.1).getType().toEnum(), ms::tof);
     }
 };
 

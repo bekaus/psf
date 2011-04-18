@@ -29,7 +29,7 @@
 
 #include <ms++/Error.h>
 #include <ms++/Log.h>
-#include <ms++/SpectralPeak.h>
+#include <psf/SpectralPeak.h>
 
 using namespace std;
 using namespace ms;
