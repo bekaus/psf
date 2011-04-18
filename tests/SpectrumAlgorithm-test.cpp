@@ -1,0 +1,316 @@
+/* $Id: SpectrumAlgorithm-test.cpp 2620 2009-10-28 09:42:57Z bkausler $ */
+
+/*
+ * SpectrumAlgorithm-test.cpp
+ *
+ * Copyright (c) 2009 Bernhard Kausler <bernhard.kausler@iwr.uni-heidelberg.de>
+ *
+ * This file is part of ms++.
+ *
+ * ms++ is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * ms++ is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with ms++. If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+#include <functional>
+#include <iostream>
+#include <utility>
+#include <vector>
+
+#include <ms++/Error.h>
+#include <ms++/Log.h>
+#include <ms++/SparseSpectrum.h>
+#include <ms++/SpectrumAlgorithm.h>
+
+#include "testdata.h"
+
+#include "unittest.hxx"
+
+namespace std {
+ostream& operator<<(ostream& os, const pair<int*, int*>& p) {
+    os << "<";
+    if(p.first!=0)
+        os << p.first;
+    else
+        os << "NULL";
+    os << ", ";
+    if (p.second!=0)
+        os << p.second;
+    else
+        os << "NULL";
+    os << ">";
+    return os;
+}
+
+ostream& operator<<(ostream& os, const pair<double, double>& p) {
+    os << "<" << p.first << ", " << p.second << ">";
+    return os;
+}
+} /*namespace std*/
+
+struct SpectrumAlgorithmTestSuite : vigra::test_suite {
+    SpectrumAlgorithmTestSuite() : vigra::test_suite("SpectrumAlgorithm") {
+        add( testCase(&SpectrumAlgorithmTestSuite::testFindBump));
+        add( testCase(&SpectrumAlgorithmTestSuite::testMeasureFullWidths));
+    }
+
+    void testFindBump() {
+    /* test data */
+
+    // A sequence with two bumps. The maxima are at 69 and 21. A bump with a plateu is at 19 (shouldn't be found).
+    // Note: The length of the array is 23.
+    int twoBumps[] = {100, 81, 56, 56, 57, 69, 40, 13, 13, 9, 18, 21, 19, 15, 16, 19, 19, 18, 12, 11, 17, 22, 47};
+    
+    std::pair<int*, int*> firstBump(twoBumps + 3, twoBumps + 7); 
+    shouldEqual(*(firstBump.first), 56);
+    shouldEqual(*(firstBump.second), 13);
+    
+    std::pair<int*, int*> secondBump(twoBumps + 9, twoBumps + 13); 
+    shouldEqual(*(secondBump.first), 9);
+    shouldEqual(*(secondBump.second), 15);
+
+    std::pair<int*, int*> twoBumps_noneFound(twoBumps + 23, twoBumps + 23);
+    shouldEqual(*(twoBumps_noneFound.first-1), 47);
+    shouldEqual(*(twoBumps_noneFound.second-1), 47);
+
+    // no bumps; only a 'valley'
+    // Note: The length of the array is 9.
+    int noBumps[] = {99, 67, 98, 98, 98, 110, 112, 117, 121};
+
+    std::pair<int*, int*> noBumps_noneFound(noBumps + 9, noBumps + 9);
+    shouldEqual(*(noBumps_noneFound.first - 1), 121);
+    shouldEqual(*(noBumps_noneFound.second - 1), 121);  
+   
+
+    std::pair<int*, int*> returned;
+
+    // find both bumps
+    returned = ms::findBump(twoBumps, twoBumps+23, std::less<int>());   
+    shouldEqual(returned, firstBump);
+    returned = ms::findBump(returned.second, twoBumps+23, std::less<int>());
+    shouldEqual(returned, secondBump);
+
+    // no bump is in this sequence
+    returned = ms::findBump(noBumps, noBumps + 9, std::less<int>());
+    shouldEqual(returned, noBumps_noneFound);
+    }
+
+    void testMeasureFullWidths() {
+        using namespace ms;
+        using namespace std;
+
+        // A sparse spectrum with three pure peaks and some noise.
+        // Peak# | lowness | full width 0.7 | full width 0.5 | full width 0.1
+        // 1     | 30%     | 2              | nan            | nan
+        // 2     | 50%     | 2              | 4              | nan
+        // 3     | 90%     | 2              | 2              | 4
+        SparseSpectrum s1;
+        s1.push_back(SparseSpectrum::Element(1, 9));
+        s1.push_back(SparseSpectrum::Element(2, 8));
+        s1.push_back(SparseSpectrum::Element(2.9, 6.8));//Peak 1 left
+        s1.push_back(SparseSpectrum::Element(3, 7));  
+        s1.push_back(SparseSpectrum::Element(4, 10)); // Peak 1 max
+        s1.push_back(SparseSpectrum::Element(5, 7));
+        s1.push_back(SparseSpectrum::Element(5.1, 6.8));  // Peak 1 right
+        s1.push_back(SparseSpectrum::Element(6, 4.9));
+        s1.push_back(SparseSpectrum::Element(6.9, 4.9));  // Peak 2 left  
+        s1.push_back(SparseSpectrum::Element(7, 5));
+        s1.push_back(SparseSpectrum::Element(8, 7));  // ...
+        s1.push_back(SparseSpectrum::Element(9, 10)); // Peak 2 max
+        s1.push_back(SparseSpectrum::Element(10, 7)); // ...
+        s1.push_back(SparseSpectrum::Element(11, 5)); // ...
+        s1.push_back(SparseSpectrum::Element(12, 1));
+        s1.push_back(SparseSpectrum::Element(12.1, 0.9)); // Peak 2 right, Peak 3 left
+        s1.push_back(SparseSpectrum::Element(12.2, 1));
+        s1.push_back(SparseSpectrum::Element(13, 5)); // ...
+        s1.push_back(SparseSpectrum::Element(12.5, 7));//...
+        s1.push_back(SparseSpectrum::Element(14, 10)); // Peak 3
+        s1.push_back(SparseSpectrum::Element(14.5, 7));//...
+        s1.push_back(SparseSpectrum::Element(15, 5));  //...
+        s1.push_back(SparseSpectrum::Element(16, 1));
+        s1.push_back(SparseSpectrum::Element(16.1, 0.9)); // Peak 3 right
+   
+        typedef vector<pair<SparseSpectrum::Element::first_type,
+                            SparseSpectrum::Element::first_type
+                           > 
+                      > MzWidthPair;
+        MzWidthPair result;
+    
+        MSPP_LOG(logINFO) << "Testing fraction of 0.7 .";
+        result = measureFullWidths(s1.begin(), s1.end(), 0.7);
+        shouldEqual(result.size(), (MzWidthPair::size_type)3);
+        should(result.at(0).first == 4);
+        shouldEqualTolerance(result.at(0).second, 2., 0.1);
+        should(result.at(1).first == 9);
+        shouldEqualTolerance(result.at(1).second, 2., 0.1);
+        should(result.at(2).first == 14);
+        shouldEqualTolerance(result.at(2).second, 2., 0.1);
+
+        MSPP_LOG(logINFO) << "Testing fraction of 0.51 .";
+        result = measureFullWidths(s1.begin(), s1.end(), 0.51);
+        shouldEqual(result.size(), (MzWidthPair::size_type)2);
+        should(result.at(0).first == 9);
+        shouldEqualTolerance(result.at(0).second, 4., 0.1);
+        should(result.at(1).first == 14);
+        shouldEqualTolerance(result.at(1).second, 2., 0.1);
+
+        MSPP_LOG(logINFO) << "Testing fraction of 0.11 .";
+        result = measureFullWidths(s1.begin(), s1.end(), 0.11);
+        shouldEqual(result.size(), (MzWidthPair::size_type)1);
+        shouldEqual(result.at(0).first, 14);
+        shouldEqualTolerance(result.at(0).second, 4., 0.1);
+
+        MSPP_LOG(logINFO) << "Testing fraction of 0.001 .";
+        result = measureFullWidths(s1.begin(), s1.end(), 0.001);
+        should(result.empty());
+
+        // testing minimum intensity
+        result = measureFullWidths(s1.begin(), s1.end(), 0.7, 0);
+        shouldEqual(result.size(), (MzWidthPair::size_type)3);
+        result = measureFullWidths(s1.begin(), s1.end(), 0.7, 11);
+        shouldEqual(result.size(), (MzWidthPair::size_type)0);
+
+        // test spectrum with no pure peaks
+        MSPP_LOG(logINFO) << "Testing spectrum with no pure peaks.";
+        SparseSpectrum s_unpure;
+        s_unpure.push_back(SparseSpectrum::Element(1, 9));
+        s_unpure.push_back(SparseSpectrum::Element(2, 8));
+        s_unpure.push_back(SparseSpectrum::Element(4, 8));
+        s_unpure.push_back(SparseSpectrum::Element(5, 7));
+        result = measureFullWidths(s_unpure.begin(), s_unpure.end(), 0.5);
+        should(result.empty());
+
+        // test spectrum with duplicate mz values
+        MSPP_LOG(logINFO) << "Testing spectrum with duplicate mz values.";
+        SparseSpectrum s_duplicate;
+        s_duplicate.push_back(SparseSpectrum::Element(1, 9));
+        s_duplicate.push_back(SparseSpectrum::Element(1, 9));
+        s_duplicate.push_back(SparseSpectrum::Element(1, 9));
+        result = measureFullWidths(s_duplicate.begin(), s_duplicate.end(), 0.5);
+        should(result.empty());
+
+        s_duplicate.push_back(SparseSpectrum::Element(6.9, 4.9));  // Peak left  
+        s_duplicate.push_back(SparseSpectrum::Element(7, 5));
+        s_duplicate.push_back(SparseSpectrum::Element(8, 7));  // ...
+        s_duplicate.push_back(SparseSpectrum::Element(9, 10)); // Peak max
+        s_duplicate.push_back(SparseSpectrum::Element(10, 7)); // ...
+        s_duplicate.push_back(SparseSpectrum::Element(11, 5)); // ...
+        s_duplicate.push_back(SparseSpectrum::Element(12, 1));
+        s_duplicate.push_back(SparseSpectrum::Element(12.1, 0.9)); // Peak right
+        result = measureFullWidths(s_duplicate.begin(), s_duplicate.end(), 0.51);
+        shouldEqual(result.size(), (MzWidthPair::size_type)1);
+        should(result.at(0).first == 9);
+        shouldEqualTolerance(result.at(0).second, 4., 0.1);
+
+        s_duplicate.push_back(SparseSpectrum::Element(12.1, 0.9));
+        s_duplicate.push_back(SparseSpectrum::Element(12.1, 0.9));
+        result = measureFullWidths(s_duplicate.begin(), s_duplicate.end(), 0.51);
+        shouldEqual(result.size(), (MzWidthPair::size_type)1);
+        should(result.at(0).first == 9);
+        shouldEqualTolerance(result.at(0).second, 4., 0.1);
+        
+        // test empty spectrum
+        MSPP_LOG(logINFO) << "Testing with empty spectrum.";
+        SparseSpectrum s_empty;
+        result = measureFullWidths(s_empty.begin(), s_empty.end(), 0.5);
+        should(result.empty());
+
+        // test fraction range
+        bool thrown = false;
+        try {
+            measureFullWidths(s1.begin(), s1.end(), 0.);
+        }
+        catch(const PreconditionViolation& e) {
+			MSPP_UNUSED(e);
+            thrown = true;
+        }
+        should(!thrown);
+        thrown = false;
+
+        try {
+            measureFullWidths(s1.begin(), s1.end(), 1.);
+        }
+        catch(const PreconditionViolation& e) {
+			MSPP_UNUSED(e);
+            thrown = true;
+        }
+        should(!thrown);
+        thrown = false;
+
+        try {
+            measureFullWidths(s1.begin(), s1.end(), -0.3);
+        }
+        catch(const PreconditionViolation& e) {
+			MSPP_UNUSED(e);
+            thrown = true;
+        }
+        should(thrown);
+        thrown = false;
+
+        try {
+            measureFullWidths(s1.begin(), s1.end(), 1.3);
+        }
+        catch(const PreconditionViolation& e) {
+			MSPP_UNUSED(e);
+            thrown = true;
+        }
+        should(thrown);
+        thrown = false;
+
+        MSPP_LOG(logINFO) << "Testing with realistic spectrum.";
+        SparseSpectrum spectrum(dirTestdata + "/SpectrumAlgorithm/realistic_ms1.wsv");
+        result = measureFullWidths(spectrum.begin(), spectrum.end(), 0.5);
+        /* result should be: (manually validated)
+        879.98 0.0443713
+        880.24 0.0195839
+        880.45 0.0447405
+        880.51 0.037717
+        880.93 0.0320702
+        881.12 0.0366487
+        881.45 0.018084
+        881.57 0.0425406
+        881.64 0.0179091
+        881.68 0.0195845
+        */
+        shouldEqual(result.at(0).first, 879.98);
+        shouldEqualTolerance(result.at(0).second, 0.0443713, 0.000001); 
+        shouldEqual(result.at(1).first, 880.24);
+        shouldEqualTolerance(result.at(1).second, 0.0195839, 0.00001);
+        shouldEqual(result.at(2).first, 880.45);
+        shouldEqualTolerance(result.at(2).second, 0.0447405, 0.00001);
+        shouldEqual(result.at(3).first, 880.51);
+        shouldEqualTolerance(result.at(3).second, 0.037717, 0.00001);
+        shouldEqual(result.at(4).first, 880.93);
+        shouldEqualTolerance(result.at(4).second, 0.0320702, 0.00001);
+        shouldEqual(result.at(5).first, 881.12);
+        shouldEqualTolerance(result.at(5).second, 0.0366487, 0.00001);
+        shouldEqual(result.at(6).first, 881.45);
+        shouldEqualTolerance(result.at(6).second, 0.018084, 0.00001);
+        shouldEqual(result.at(7).first, 881.57);
+        shouldEqualTolerance(result.at(7).second, 0.0425406, 0.00001);
+        shouldEqual(result.at(8).first, 881.64);
+        shouldEqualTolerance(result.at(8).second, 0.0179091, 0.00001);
+        shouldEqual(result.at(9).first, 881.68);
+        shouldEqualTolerance(result.at(9).second, 0.0195845, 0.00001);   
+    }
+};
+
+int main()
+{
+    SpectrumAlgorithmTestSuite test;
+    int failed = test.run();
+    std::cout << test.report() << std::endl;
+    return failed;
+}
+
+

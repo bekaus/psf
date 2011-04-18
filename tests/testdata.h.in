@@ -1,0 +1,2 @@
+#include <string>
+static const std::string dirTestdata = "@MSPP_SOURCE_DIR@/tests/testdata";
