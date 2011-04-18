@@ -41,9 +41,7 @@ struct PeakShapeFunctionTemplateTestSuite : vigra::test_suite {
     PeakShapeFunctionTemplateTestSuite() : vigra::test_suite("PeakShapeFunctionTemplate") {
         add( testCase(&PeakShapeFunctionTemplateTestSuite::testOperator));
         add( testCase(&PeakShapeFunctionTemplateTestSuite::testGetSupportThreshold));
-        add( testCase(&PeakShapeFunctionTemplateTestSuite::testClone));
         add( testCase(&PeakShapeFunctionTemplateTestSuite::testGetType));
-        add( testCase(&PeakShapeFunctionTemplateTestSuite::testVirtuality));
         add( testCase(&PeakShapeFunctionTemplateTestSuite::testSet_GetMinimalPeakHeightForCalibration));
         add( testCase(&PeakShapeFunctionTemplateTestSuite::testOrbiFwhmLinearSqrtPeakShape));
     }
@@ -96,31 +94,9 @@ struct PeakShapeFunctionTemplateTestSuite : vigra::test_suite {
         shouldEqual(gen.getSupportThreshold(400.), threshold);
     }
 
-    void testClone() {
-        ms::PeakShapeFunctionTemplate<ms::GaussianPeakShape, ms::TofFwhm, ms::tof> gen_original;
-        gen_original.setA(1.23456);
-        gen_original.setB(6.54321);
-        
-        ms::PeakShapeFunctionTemplate<ms::GaussianPeakShape, ms::TofFwhm, ms::tof>* cloned = gen_original.clone();
-        shouldEqual(cloned->getA(), gen_original.getA());
-        shouldEqual(cloned->getB(), gen_original.getB());
-
-        delete cloned;
-        cloned = NULL;   
-    }
-
     void testGetType() {
         ms::PeakShapeFunctionTemplate<ms::GaussianPeakShape, ms::TofFwhm, ms::tof> gen;
         shouldEqual(gen.getType().toEnum(), ms::tof);
-    }
-
-    void testVirtuality() {
-        // we test the correct behaviour treating the Template as a PeakShapeFunction
-        ms::PeakShapeFunction* psf = new ms::PeakShapeFunctionTemplate<ms::GaussianPeakShape, ms::TofFwhm, ms::tof>;
-        shouldEqual(psf->getType().toEnum(), ms::tof);
-        
-        delete psf;
-        psf = NULL;
     }
 
     void testSet_GetMinimalPeakHeightForCalibration() {
