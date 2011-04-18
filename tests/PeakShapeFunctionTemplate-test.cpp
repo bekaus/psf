@@ -28,7 +28,7 @@
 #include <ms++/Log.h>
 #include <psf/PeakParameter.h>
 #include <psf/PeakShape.h>
-#include <ms++/PeakShapeFunction.h>
+#include <psf/PeakShapeFunction.h>
 #include <psf/PeakShapeFunctionTemplate.h>
 
 #include "unittest.hxx"

@@ -34,6 +34,12 @@
 #include <ms++/Log.h>
 #include <ms++/SparseSpectrum.h>
 
+#include "psf/PeakParameter.h"
+#include "psf/PeakShape.h"
+#include "psf/PeakShapeFunctionTemplate.h"
+
+
+
 /**
  * @page peakshapefunction Peakshape Functions
  *
@@ -112,96 +118,42 @@
 namespace ms
 {
 /**
- * The peak shape functions, which are implementing the abstract PeakShapeFunction interface.
- *
- * The 'box' type is only used for unit testing. The other types are included in the core
- * library.
- *
- * @author Bernhard X. Kausler <bernhard.kausler@iwr.uni-heidelberg.de>
- * @date 2009-04-14
- */
-enum MSPP_EXPORT PeakShapeFunctionTypes {box, gaussian, orbi, orbiBox, tof};
+* A peak shape function as it occurs in Orbitrap mass spectra.
+*
+* The Orbitrap peak shape function is parameterized via a linear sqrt model, which goes through the origin: @f$ f(x) = a\cdot x\sqrt{x}@f$ .
+* You can set the model parameter a via the corresponding getter/setter method in the
+* PeakShapeFunctionTemplate interface. Furthermore, you may autocalibrate the parameter calling the calibrateFor() method.
+*
+* This function is robust concerning autocalibration, because the autocalibration cannot set the parameter a so, that the function becomes invalid in some
+* mz ranges. That's why we choose a PeakParameter, which is constrained in the origin.
+* @see ms::RobustOrbitrapPeakShapeFunction 
+*/
+typedef PeakShapeFunctionTemplate<GaussianPeakShape, OrbitrapWithOriginFwhm, orbi> OrbitrapPeakShapeFunction;
 
 /**
- * Encapsulates the PeakShapeFunctionTypes and provides conversion functions.
- *
- * @author Bernhard X. Kausler <bernhard.kausler@iwr.uni-heidelberg.de>
- * @date 2009-04-14
- */
-class MSPP_EXPORT PeakShapeFunctionType
-{
-    public:
-        /**
-         * You may use the constructor in an implict way: 'PeakShapeFunctionType type = gaussian;'.
-         */
-        PeakShapeFunctionType(PeakShapeFunctionTypes type) : type_(type) {};
-
-        PeakShapeFunctionTypes toEnum();
-
-        /**
-         * @return Depending on the type: 'box', 'gaussian', 'orbi', 'orbiBox' or 'time-of-flight'.
-         *         If the type is not known, 'unknown'.
-         */
-        std::string toString();
-
-    protected:
-        PeakShapeFunctionTypes type_;
-};
+* A peak shape function as it occurs in centroided Orbitrap mass spectra.
+*
+* The function is similar to the @see ms::OrbitrapPeakShapeFunction, the only difference being that 
+* the window shape is a box. Support threshold calculation etc are identical to the @see OrbitrapPeakShapeFunction.
+* The Orbitrap peak shape function is parameterized via a linear sqrt model, which goes through the origin: @f$ f(x) = a\cdot x\sqrt{x}@f$ .
+* You can set the model parameter a via the corresponding getter/setter method in the
+* PeakShapeFunctionTemplate interface. Furthermore, you may autocalibrate the parameter calling the calibrateFor() method.
+*
+* This function is robust concerning autocalibration, because the autocalibration cannot set the parameter a so, that the function becomes invalid in some
+* mz ranges. That's why we choose a PeakParameter, which is constrained in the origin.
+* @see ms::RobustOrbitrapPeakShapeFunction 
+*/
+typedef PeakShapeFunctionTemplate<BoxPeakShape, OrbitrapWithOriginFwhm, orbi> OrbitrapBoxPeakShapeFunction;
 
 /**
- * Base class for peak shape function (PSF) functor objects.
- * @author Marc Kirchner <marc.kirchner@childrens.harvard.edu>
- */
-class MSPP_EXPORT PeakShapeFunction
-{
-public:
-    /**
-     * Clone().
-     */
-    virtual PeakShapeFunction* clone() const = 0;
-    /**
-     * Pure virtual destructor
-     */
-    virtual ~PeakShapeFunction() = 0;
-
-
-    /**
-     * operator()
-     * @param referenceMass the m/z value at the center of the PSF
-     * @param observedMass the m/z value of the mass for which the value of the PSF is desired
-     * @return the value of the PSF at (observedMass-referenceMass)
-     */
-    virtual double operator()(const double referenceMass, const double observedMass) const = 0;
-
-    /**
-     * Return the width of the PSF support at a specific m/z value.
-     *
-     * The threshold is a relative distance measured from the center of the peak shape
-     * and is symmetrical around the center. After the threshold, the peak shape function
-     * is set to zero.
-     * @param mz the m/z value of the PSF center
-     * @return the width of the PSF support at the given m/z position
-     */
-    virtual double getSupportThreshold(const double mz) const = 0;
-
-    /**
-     * Returns the actual implementation type of the abstract PeakShapeFunction interface.
-     *
-     * @author Bernhard X. Kausler <bernhard.kausler@iwr.uni-heidelberg.de>
-     * @date 2009-04-14
-     */
-    virtual PeakShapeFunctionType getType() = 0;
-
-    virtual void calibrateFor(SparseSpectrum::const_iterator first, SparseSpectrum::const_iterator last) {
-        // FIXME: this should be pure virtual; for now we need to keep it to keep
-        //        backwards compatibility. Remove as soon as possible!
-        MSPP_LOG(logERROR) << "ms::PeakShapeFunction::calibrateFor(...) "
-            << "needs to be reimplemented in derived classes.";
-        throw ms::RuntimeError("ms::PeakShapeFunction::calibrateFor(...) needs to be reimplemented in derived classes.");
-    }
-
-
-}; /* class PeakShapeFunction */
+* A peak shape function with a gaussian shape static everywhere in a mass spectrum.
+*
+* You can set the full width at half maximum of the gaussian via the 'a' getter and setter 
+* in the PeakShapeFunctionTemplate
+* interface (the 'b' functions are not supported and produce compile time errors if used).
+* Furthermore, you may autocalibrate the parameter calling the calibrateFor() method.
+*/
+typedef PeakShapeFunctionTemplate<GaussianPeakShape, ConstantFwhm, gaussian> GaussianPeakShapeFunction;
 
 } /* namespace ms */
 

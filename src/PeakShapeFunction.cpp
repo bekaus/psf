@@ -25,7 +25,7 @@
 
 #include <string>
 
-#include "ms++/PeakShapeFunction.h"
+#include "psf/PeakShapeFunction.h"
 
 using namespace ms;
 
@@ -60,9 +60,3 @@ std::string PeakShapeFunctionType::toString() {
             break;
     }
 }
-
-
-
-// define pure virtual destructor
-ms::PeakShapeFunction::~PeakShapeFunction() {}
-

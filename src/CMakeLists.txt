@@ -1,8 +1,5 @@
 SET(SRCS-MSPP 
     SparseSpectrum.cpp
-    PeakShapeFunction.cpp
-    OrbiBoxPeakShapeFunction.cpp
-    OrbiBoxPeakShapeFunction.cpp
 )
 
 SET(SRCS 
@@ -11,6 +8,7 @@ SET(SRCS
     GaussianPeakShape.cpp
     LinearSqrtModel.cpp
     LorentzianPeakShape.cpp
+    PeakShapeFunction.cpp
     QuadraticModel.cpp
     SpectralPeak.cpp
     SpectrumAlgorithm.cpp
