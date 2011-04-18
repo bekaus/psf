@@ -13,7 +13,6 @@ CONFIGURE_FILE(${CMAKE_CURRENT_SOURCE_DIR}/testdata.h.in
 #### Sources
 SET(SRCS_SPECTRALPEAK SpectralPeak-test.cpp)
 SET(SRCS_SPECTRUMALGORITHM SpectrumAlgorithm-test.cpp)
-SET(SRCS_PEAKSHAPEFUNCTIONTEMPLATE PeakShapeFunctionTemplate-test.cpp)
 SET(SRCS_PEAKPARAMETER PeakParameter-test.cpp)
 SET(SRCS_PEAKSHAPE PeakShape-test.cpp)
 SET(SRCS_PEAKSHAPEFUNCTION  PeakShapeFunction-test.cpp)
@@ -39,7 +38,6 @@ ENDMACRO(ADD_PSF_TEST name exe src)
 ADD_PSF_TEST("PeakParameter" test_peakparameter ${SRCS_PEAKPARAMETER})
 ADD_PSF_TEST("PeakShape" test_peakshape ${SRCS_PEAKSHAPE})
 ADD_PSF_TEST("PeakShapeFunction" test_peakshapefunction ${SRCS_PEAKSHAPEFUNCTION})
-ADD_PSF_TEST("PeakShapeFunctionTemplate" test_peakshapefunctiontemplate ${SRCS_PEAKSHAPEFUNCTIONTEMPLATE})
 ADD_PSF_TEST("SpectralPeak" test_spectralpeak ${SRCS_SPECTRALPEAK})
 ADD_PSF_TEST("SpectrumAlgorithm" test_spectrumalgorithm ${SRCS_SPECTRUMALGORITHM})
 
