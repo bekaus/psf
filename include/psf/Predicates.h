@@ -1,5 +1,5 @@
 /*
- * LessByExtractor.h
+ * Predicates.h
  *
  * Copyright (c) 2011 Bernhard Kausler <bernhard.kausler@iwr.uni-heidelberg.de>
  *
@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef __LESSBYEXTRACTOR_H__
-#define __LESSBYEXTRACTOR_H__
+#ifndef __PREDICATES_H__
+#define __PREDICATES_H__
 
 namespace ms
 {
@@ -46,6 +46,21 @@ class MSPP_EXPORT LessByExtractor {
   Extractor extract_;
 };
 
+
+
+template< typename Element, typename Extractor >
+class MSPP_EXPORT MoreThanValue {
+   public:
+   MoreThanValue( const Extractor& e, typename Extractor::result_type val ) : extract_(e), val_(val) {};
+   bool operator()( const Element& e ) const {
+     return val_ < extract_(e);    
+  };
+
+  private:
+  Extractor extract_;
+  typename Extractor::result_type val_;
+};
+
 } /* namespace ms */
 
-#endif /*__LESSBYEXTRACTOR_H__*/
+#endif /*__PREDICATES_H__*/

@@ -26,11 +26,12 @@
 #define __SPECTRALPEAK_H__
 
 #include <algorithm>
+#include <iterator>
 
 #include <ms++/config.h>
 #include <ms++/SparseSpectrum.h>
 #include <psf/SpectrumAlgorithm.h>
-#include <psf/LessByExtractor.h>
+#include <psf/Predicates.h>
 
 namespace ms
 {
@@ -136,9 +137,10 @@ namespace SpectralPeak
       *
       * @author Bernhard Kausler <bernhard.kausler@iwr.uni-heidelberg.de>
       */
-	MSPP_EXPORT
-    SparseSpectrum::Element::first_type 
-    fullWidthAtFractionOfMaximum(SparseSpectrum::const_iterator firstElement, SparseSpectrum::const_iterator lastElement, const double fraction);
+    template< typename FwdIter, typename MzExtractor, typename IntensityExtractor >
+    MSPP_EXPORT
+    typename MzExtractor::result_type 
+    fullWidthAtFractionOfMaximum(const MzExtractor&, const IntensityExtractor&, FwdIter firstElement, FwdIter lastElement, const double fraction);
 
 } /* namespace SpectralPeak */
 
@@ -186,6 +188,150 @@ double ms::SpectralPeak::lowness(const IntensityExtractor& get_int, FwdIter firs
 
     return 1. - (get_int(moreAbundantOne)/get_int(*maximum));
 }
+
+
+
+// fullWidthAtFractionOfMaximum(): private implementation details
+namespace 
+{
+// findElementBelowTargetAbundance()
+/**
+ * Find Element below the target abundance given the Element above or on the target abundance.
+ *
+ * We are working on the sequence [firstElement, above]. Every Element besides the 'above'
+ * element has to be lower than the 'target' abundance. The above Element may actually
+ * be exactly on or above the target abundance. If these preconditions are not met,
+ * the behaviour is undefined.
+ *
+ * @param firstElement Input const_iterator to the first SparseSpectrum::Element of the sequence to be searched.
+ * @param above Input const_iterator to the SparseSpectrum::Element on or above the target abundance. The distance 
+ *              above - firstElement may not be negative. Else, the behaviour is undefined.
+ * @param target The target abundance
+ *
+ * @return The SparseSpectrum::Element below the target abundance nearest (in mz dimension) to the above Element.
+ *         Is the above Element exactly on the target, below is the same as the above Element.
+ *
+ * @throw ms::Starvation No Element below found.
+ */      
+template <typename const_InIter, typename IntensityExtractor>
+const_InIter findElementBelowTargetAbundance(const IntensityExtractor&, const const_InIter firstElement, const const_InIter above, const typename IntensityExtractor::result_type target);
+
+// interpolateElements()
+/**
+ * Takes two elements and blends them together with a specific target intensity.
+ *
+ * The interpolation is done linearly in the mz dimension so that the result has the 
+ * target abundance. The order of element1 and element2 is not important. If element1 and element2 have the same mz value,
+ * then the mz value is directly return without interpolation.
+ * If element1 and element2 differ in mz, they have to differ in abundance, too.
+ *
+ * @return The mz value of the interpolated element with an abundance of 'target'.
+ *
+ * @throw ms::InvariantViolation Element1 and element2 differ in mz but not in abundance.
+ *                               No interpolation to a general target is then possible.
+ */
+template< typename MzExtractor, typename IntensityExtractor, typename element_type>
+typename MzExtractor::result_type interpolateElements(const MzExtractor&, const IntensityExtractor&, const element_type& element1, const element_type& element2, const typename IntensityExtractor::result_type target);
+
+} /* anonymous namespace */
+
+// fullWidthAtFractionOfMaximum()
+template< typename FwdIter, typename MzExtractor, typename IntensityExtractor >
+typename MzExtractor::result_type 
+SpectralPeak::
+fullWidthAtFractionOfMaximum(const MzExtractor& get_mz, const IntensityExtractor& get_int, FwdIter firstElement, FwdIter lastElement, const double fraction) {
+    mspp_precondition(0. <= fraction && fraction <= 1., "fullWidthAtFractionOfMaximum(): Fraction parameter out of range.");
+
+    /* Determine target intensity */
+    // Compare elements by intensity
+    LessByExtractor<typename IntensityExtractor::element_type, IntensityExtractor> comp(get_int);
+    // find maximum intensity
+    FwdIter maximum = max_element(firstElement, lastElement + 1, comp);
+    MSPP_LOG(logDEBUG1) << "fullWidthAtFractionOfMaximum(): Spectral peak maximum detected at (mz, intensity): " << get_mz(*maximum) << " ," << get_int(*maximum); 
+    // calc target intensity
+    const typename IntensityExtractor::result_type target = get_int(*maximum) * fraction;
+    MSPP_LOG(logDEBUG1) << "fullWidthAtFractionOfMaximum(): Fraction of maximal intensity is: " << target;
+    
+    // we need that further below for finding elements
+    MoreThanValue<typename IntensityExtractor::element_type, IntensityExtractor> compScalar(get_int, target);
+
+    /* find utter left element nearest above or on target */
+    // target <= above == !(above < target) 
+    FwdIter aboveOnLeft = find_if(firstElement, maximum + 1, compScalar);
+    MSPP_LOG(logDEBUG1) << "fullWidthAtFractionOfMaximum(): aboveOnLeft detected at (mz, intensity): " << get_mz(*aboveOnLeft) << " ," << get_int(*aboveOnLeft); 
+    // determine belowOnLeft
+    FwdIter belowOnLeft = findElementBelowTargetAbundance(get_int, firstElement, aboveOnLeft, target);
+    MSPP_LOG(logDEBUG1) << "fullWidthAtFractionOfMaximum(): belowOnLeft detected at (mz, intensity): " << get_mz(*belowOnLeft) << " ," << get_int(*belowOnLeft);
+
+    /* find utter right element */
+    // we now start searching from the right
+    std::reverse_iterator<FwdIter> rlast(lastElement + 1);
+    std::reverse_iterator<FwdIter> rmaximum(maximum);
+    // target <= above == !(above < target) 
+    std::reverse_iterator<FwdIter> aboveOnRight = find_if(rlast, rmaximum, compScalar);
+    MSPP_LOG(logDEBUG1) << "fullWidthAtFractionOfMaximum(): aboveOnRight detected at (mz, intensity): " << get_mz(*aboveOnRight) << " ," << get_int(*aboveOnRight);     
+    // determine belowOnRight
+    std::reverse_iterator<FwdIter> belowOnRight = findElementBelowTargetAbundance(get_int, rlast, aboveOnRight, target);
+    MSPP_LOG(logDEBUG1) << "fullWidthAtFractionOfMaximum(): belowOnRight detected at (mz, intensity): " << get_mz(*belowOnRight) << " ," << get_int(*belowOnRight); 
+    
+    /* interpolate below and above elements */
+    typename MzExtractor::result_type leftInterpolated = interpolateElements(get_mz, get_int, *belowOnLeft, *aboveOnLeft, target);
+    MSPP_LOG(logDEBUG1) << "fullWidthAtFractionOfMaximum(): leftInterpolated is: " << leftInterpolated;
+    typename MzExtractor::result_type rightInterpolated = interpolateElements(get_mz, get_int, *belowOnRight, *aboveOnRight, target);
+    MSPP_LOG(logDEBUG1) << "fullWidthAtFractionOfMaximum(): rightInterpolated is: " << rightInterpolated;
+
+    return rightInterpolated - leftInterpolated;
+}
+
+
+
+namespace
+{
+    // findElementBelowTargetAbundance() 
+    template <typename const_InIter, typename IntensityExtractor>
+    const_InIter findElementBelowTargetAbundance(const IntensityExtractor& get_int, const const_InIter firstElement, const const_InIter above, const typename IntensityExtractor::result_type target) {
+        const_InIter below;
+
+        // Check if the above Element coincides with the firstElement
+        if (firstElement == above) {
+            // Rule out special case, where abundance of above Element equals target abundance
+            if(target < get_int(*above)) { 
+                throw Starvation("fullWidthAtFractionOfMaximum(): No elements on the left below target abundance.");
+            }
+            // special case: target == above
+            else {
+                below = above;
+                MSPP_LOG(logDEBUG2) << "findElementBelowTargetAbundance(): Target abundance equals abundance of element above. Setting below element equal to above element.";
+            }        
+        } else {
+            // Choose nearest neighbor in mz dimension (guaranteed to be below target abundance by our imposed preconditions).
+            below = above - 1;
+        }
+
+        return below;
+    }
+
+    // interpolateElements()
+    template< typename MzExtractor, typename IntensityExtractor, typename element_type>
+    typename MzExtractor::result_type interpolateElements(const MzExtractor& get_mz, const IntensityExtractor& get_int, const element_type& element1, const element_type& element2, const typename IntensityExtractor::result_type target) {
+        if (get_mz(element1) == get_mz(element2)) {
+            return get_mz(element2);
+        } else {
+            mspp_invariant(get_int(element1) != get_int(element2), "interpolateElements(): Illegal abundance state: below < target && target <= above && above == below."); 
+
+            // abundance = slope * mz + shift      
+            double slope = 1.0 * (get_int(element2) - get_int(element1)) / (get_mz(element2) - get_mz(element1));
+            MSPP_LOG(logDEBUG2) << "interpolateElements(): slope of linear interpolation: " << slope;              
+
+            // just take one of the two Elements to determine the shift
+            double shift = get_int(element1) - slope * get_mz(element1);
+            MSPP_LOG(logDEBUG2) << "interpolateElements(): shift of linear interpolation: " << shift; 
+
+            // => mz = (abundance - shift)/slope
+            return static_cast<typename MzExtractor::result_type>( (target - shift) / slope );
+        }
+    }
+} /* anonymous namespace */
 
 } /* namespace ms */
 

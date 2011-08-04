@@ -127,6 +127,9 @@ struct SpectralPeakTestSuite : vigra::test_suite {
     }
 
     void testFullWidthAtFractionOfMaximum() {
+        MzExtractor get_mz;
+        IntensityExtractor get_int;
+
         // A 'normal' peak.
         // Note the abundance twist in the last two elements.
         //
@@ -134,22 +137,22 @@ struct SpectralPeakTestSuite : vigra::test_suite {
         // 0.7      | 0.257459
         // 0.5      | 0.397029
         // 0.3      | lowness to small -> not defined     
-        SparseSpectrum s1;
-        s1.push_back(SparseSpectrum::Element(0.4, 0.12));
-        s1.push_back(SparseSpectrum::Element(1.1, 1.1));
-        s1.push_back(SparseSpectrum::Element(1.2, 1.9));
-        s1.push_back(SparseSpectrum::Element(1.4, 3.1));
-        s1.push_back(SparseSpectrum::Element(1.5, 2.2));
-        s1.push_back(SparseSpectrum::Element(1.6, 0.98));
-        s1.push_back(SparseSpectrum::Element(1.69, 1.14));
+        Spectrum s1;
+        s1.push_back(SpectrumElement(0.4, 0.12));
+        s1.push_back(SpectrumElement(1.1, 1.1));
+        s1.push_back(SpectrumElement(1.2, 1.9));
+        s1.push_back(SpectrumElement(1.4, 3.1));
+        s1.push_back(SpectrumElement(1.5, 2.2));
+        s1.push_back(SpectrumElement(1.6, 0.98));
+        s1.push_back(SpectrumElement(1.69, 1.14));
 
-        shouldEqualTolerance(SpectralPeak::fullWidthAtFractionOfMaximum(s1.begin(), --(s1.end()), 0.7), 0.257459, 0.000001);
-        shouldEqualTolerance(SpectralPeak::fullWidthAtFractionOfMaximum(s1.begin(), --(s1.end()), 0.5), 0.397029, 0.000001);
+        shouldEqualTolerance(SpectralPeak::fullWidthAtFractionOfMaximum(get_mz, get_int, s1.begin(), --(s1.end()), 0.7), 0.257459, 0.000001);
+        shouldEqualTolerance(SpectralPeak::fullWidthAtFractionOfMaximum(get_mz, get_int, s1.begin(), --(s1.end()), 0.5), 0.397029, 0.000001);
 
         // not defined: full width at fraction of 0.3
         bool thrown = false;
         try {
-            SpectralPeak::fullWidthAtFractionOfMaximum(s1.begin(), --(s1.end()), 0.3);
+            SpectralPeak::fullWidthAtFractionOfMaximum(get_mz, get_int, s1.begin(), --(s1.end()), 0.3);
         }
         catch(const Starvation& e) {
 			MSPP_UNUSED(e);
@@ -160,7 +163,7 @@ struct SpectralPeakTestSuite : vigra::test_suite {
 
         // illegal fraction
         try {
-            SpectralPeak::fullWidthAtFractionOfMaximum(s1.begin(), --(s1.end()), 1.1);
+            SpectralPeak::fullWidthAtFractionOfMaximum(get_mz, get_int, s1.begin(), --(s1.end()), 1.1);
         }
         catch(const PreconditionViolation& e) {
 			MSPP_UNUSED(e);
@@ -170,7 +173,7 @@ struct SpectralPeakTestSuite : vigra::test_suite {
         thrown = false;
 
         try {
-            SpectralPeak::fullWidthAtFractionOfMaximum(s1.begin(), --(s1.end()), -0.3);
+            SpectralPeak::fullWidthAtFractionOfMaximum(get_mz, get_int, s1.begin(), --(s1.end()), -0.3);
         }
         catch(const PreconditionViolation& e) {
 			MSPP_UNUSED(e);
@@ -181,21 +184,21 @@ struct SpectralPeakTestSuite : vigra::test_suite {
 
         // legal border fraction values
         // no PreconditionViolation should be thrown here
-        SpectralPeak::fullWidthAtFractionOfMaximum(s1.begin(), --(s1.end()), 1.0);
+        SpectralPeak::fullWidthAtFractionOfMaximum(get_mz, get_int, s1.begin(), --(s1.end()), 1.0);
         try {
-            SpectralPeak::fullWidthAtFractionOfMaximum(s1.begin(), --(s1.end()), 0.0);
+            SpectralPeak::fullWidthAtFractionOfMaximum(get_mz, get_int, s1.begin(), --(s1.end()), 0.0);
         }
         catch(const Starvation& e) {
             MSPP_UNUSED(e);
         }
 
         // Special peak with elements exactly on target abundance
-        SparseSpectrum s_onTarget;
-        s_onTarget.push_back(SparseSpectrum::Element(3, 7));
-        s_onTarget.push_back(SparseSpectrum::Element(4, 10));
-        s_onTarget.push_back(SparseSpectrum::Element(5, 7));
+        Spectrum s_onTarget;
+        s_onTarget.push_back(SpectrumElement(3, 7));
+        s_onTarget.push_back(SpectrumElement(4, 10));
+        s_onTarget.push_back(SpectrumElement(5, 7));
 
-        shouldEqualTolerance(SpectralPeak::fullWidthAtFractionOfMaximum(s_onTarget.begin(), --(s_onTarget.end()), 0.71), 2., 0.1);
+        shouldEqualTolerance(SpectralPeak::fullWidthAtFractionOfMaximum(get_mz, get_int, s_onTarget.begin(), --(s_onTarget.end()), 0.71), 2., 0.1);
     }
 };
 
