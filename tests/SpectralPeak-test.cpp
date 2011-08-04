@@ -25,8 +25,8 @@
 #include <iostream>
 
 #include <ms++/Error.h>
-#include <ms++/SparseSpectrum.h>
 #include <psf/SpectralPeak.h>
+#include <psf/Spectrum.h>
 
 #include "unittest.hxx"
 
@@ -40,22 +40,22 @@ struct SpectralPeakTestSuite : vigra::test_suite {
     }
 
     void testHeight() {
+	IntensityExtractor get_int;
         // A peak with height 3.1
-        SparseSpectrum s1;
-        s1.push_back(SparseSpectrum::Element(1.1, 1.1));
-        s1.push_back(SparseSpectrum::Element(1.2, 1.9));
-        s1.push_back(SparseSpectrum::Element(1.4, 3.1));
-        s1.push_back(SparseSpectrum::Element(1.5, 2.2));
-        s1.push_back(SparseSpectrum::Element(1.69, 1.14));
-        s1.push_back(SparseSpectrum::Element(1.76, 0.98));
-
-        shouldEqual(SpectralPeak::height(s1.begin(), --(s1.end())), 3.1);
+        Spectrum s1;
+        s1.push_back(SpectrumElement(1.1, 1.1));
+        s1.push_back(SpectrumElement(1.2, 1.9));
+        s1.push_back(SpectrumElement(1.4, 3.1));
+        s1.push_back(SpectrumElement(1.5, 2.2));
+        s1.push_back(SpectrumElement(1.69, 1.14));
+        s1.push_back(SpectrumElement(1.76, 0.98));
+	shouldEqual(SpectralPeak::height(get_int, s1.begin(), --(s1.end())), 3.1);
         
         // A empty spectrum
-        SparseSpectrum s2;
+        Spectrum s2;
         bool thrown = false;
         try {
-            SpectralPeak::height(s2.begin(), --(s2.end()));
+            SpectralPeak::height(get_int, s2.begin(), --(s2.end()));
         }
         catch(const PreconditionViolation& e) {
 			MSPP_UNUSED(e);

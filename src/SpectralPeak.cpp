@@ -34,22 +34,6 @@
 using namespace std;
 using namespace ms;
 
-// height()
-SparseSpectrum::Element::second_type
-ms::SpectralPeak::height(SparseSpectrum::const_iterator firstElement, SparseSpectrum::const_iterator lastElement) {
-    mspp_precondition(distance(firstElement, lastElement) >=0, "SpectralPeak::height(): Distance between first and last input element is not nonnegative.");
-    
-    // Compare elements by abundance
-    SparseSpectrum::LessThanAbundance<SparseSpectrum::Element, SparseSpectrum::Element> comp; 
-
-    // find maximum abundance
-    SparseSpectrum::const_iterator maximum = max_element(firstElement, ++lastElement, comp);
-
-    return maximum->abundance;
-}
-
-
-
 // lowness()
 double ms::SpectralPeak::lowness(SparseSpectrum::const_iterator firstElement, SparseSpectrum::const_iterator lastElement) {
     // comply to STL standards.

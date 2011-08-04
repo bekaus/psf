@@ -27,6 +27,8 @@
 
 #include <ms++/config.h>
 #include <ms++/SparseSpectrum.h>
+#include <psf/SpectrumAlgorithm.h>
+#include <psf/LessByExtractor.h>
 
 namespace ms
 {
@@ -67,9 +69,10 @@ namespace SpectralPeak
      *
      * @author Bernhard Kausler <bernhard.kausler@iwr.uni-heidelberg.de>
      */
-	MSPP_EXPORT
-    SparseSpectrum::Element::second_type
-    height(SparseSpectrum::const_iterator firstElement, SparseSpectrum::const_iterator lastElement);     
+    template< typename FwdIter, typename IntensityExtractor >
+    MSPP_EXPORT
+    typename IntensityExtractor::result_type
+    height(const IntensityExtractor&, FwdIter firstElement, FwdIter lastElement);     
 
     // SpectralPeak::lowness()
     /**
@@ -134,6 +137,24 @@ namespace SpectralPeak
     fullWidthAtFractionOfMaximum(SparseSpectrum::const_iterator firstElement, SparseSpectrum::const_iterator lastElement, const double fraction);
 
 } /* namespace SpectralPeak */
+
+
+
+/* implementation */
+
+// height()
+template< typename FwdIter, typename IntensityExtractor >
+typename IntensityExtractor::result_type
+SpectralPeak::height(const IntensityExtractor& get_int, FwdIter firstElement, FwdIter lastElement) {
+    mspp_precondition(distance(firstElement, lastElement) >=0, "SpectralPeak::height(): Distance between first and last input element is not nonnegative.");
+    
+    // Compare elements by intensity
+    LessByExtractor<typename IntensityExtractor::element_type, IntensityExtractor> comp(get_int);
+    // find maximum intensity
+    FwdIter maximum = max_element(firstElement, ++lastElement, comp);
+
+    return get_int(*maximum);
+}
 
 } /* namespace ms */
 
