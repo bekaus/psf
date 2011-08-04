@@ -1,10 +1,7 @@
-/*$Id: SpectrumAlgorithm.h 2613 2009-10-26 23:34:00Z bkausler $*/
-
 /*
  * SpectrumAlgorithm.h
  *
  * Copyright (c) 2009 Bernhard Kausler <bernhard.kausler@iwr.uni-heidelberg.de>
- * Copyright (c) 2008 Marc Kirchner <marc.kirchner@iwr.uni-heidelberg.de>
  *
  * This file is part of ms++.
  *
@@ -31,31 +28,14 @@
 #include <utility>
 #include <vector>
 
+#include <ms++/Log.h>
 #include <ms++/Error.h>
-#include <ms++/SparseSpectrum.h>
+
+#include <psf/SpectralPeak.h>
+#include <psf/LessByExtractor.h>
 
 namespace ms
 {
-
-// class lessByExtractor
-/**
- * Compare two elements with regard to a certain aspect.
- *
- * Typically, an element in a spectrum represents more than one value 
- * (such as m/z, intensity, time etc.) Use this functor to compare two
- * elements with regard to one of these values.
- */
-template< typename Element, typename Extractor >
-class lessByExtractor {
-  public:
-  lessByExtractor( const Extractor& e ) : extract_(e) {};
-  bool operator()( const Element&, const Element& ) const;
-
-  private:
-  Extractor extract_;
-};
-
-
 
 // findBump()
 /**
@@ -127,14 +107,6 @@ measureFullWidths2(MzExtrator get_mz, IntensityExtractor get_int, FwdIter first,
 
 
 /* implementation */
-
-// lessByExtractor::operator()()
-template< typename Element, typename Extractor >
-bool lessByExtractor< Element, Extractor >::operator()( const Element& lhs, const Element& rhs ) const {
-  return extract_(lhs) < extract_(rhs);
-}
-
-
 
 // findBump()
 template<typename FwdIter, typename Compare>
