@@ -99,6 +99,11 @@ MSPP_EXPORT
 std::vector<std::pair<SparseSpectrum::Element::first_type, SparseSpectrum::Element::first_type> > 
 measureFullWidths(SparseSpectrum::const_iterator first, SparseSpectrum::const_iterator last, double fraction, double minimalPeakHeight = 0);
 
+template<typename FwdIter, typename MzExtractor, typename IntensityExtractor> 
+MSPP_EXPORT
+std::vector<std::pair<MzExtractor::result_type, MzExtractor::result_type> > 
+measureFullWidths2(MzExtrator get_mz, IntensityExtractor get_int, FwdIter first, FwdIter last, double fraction, IntensityExtractor::result_type minimalPeakHeight = 0);
+
 
 
 /* implementation */
@@ -180,6 +185,61 @@ std::pair<FwdIter, FwdIter> findBump(FwdIter first, FwdIter last, Compare comp) 
     else {
         return std::make_pair(last, last);
     }
+}
+
+
+
+// measureFullWidths()
+template<typename FwdIter, typename MzExtractor, typename IntensityExtractor> 
+MSPP_EXPORT
+std::vector<std::pair<MzExtractor::result_type, MzExtractor::result_type> > 
+measureFullWidths2(MzExtrator get_mz, IntensityExtractor get_int, FwdIter first, FwdIter last, double fraction, IntensityExtractor::result_type minimalPeakHeight = 0) {
+    typedef MzExtractor::result_type Mz;
+    typedef IntensityExtractor::result_type Intensity;
+
+    mspp_precondition(0. <= fraction && fraction <= 1., 
+        "measureFullWidths(): Parameter fraction out of required range.");
+
+    // The result
+    std::vector<std::pair<Mz, Mz> > widths;
+
+    // Check for empty spectrum or only one element
+    if((last - first) < 1) {
+        return widths;
+    }
+
+    // prerequisites    
+    const double requiredLowness = 1. - fraction;
+    std::pair<FwdIter, FwdIter> bump;
+    Mz positionOfMaximum = 0;
+    Intensity bumpHeight = 0;    
+    Mz width = 0;  
+    SparseSpectrum::LessThanAbundance<SparseSpectrum::Element, SparseSpectrum::Element> comp; // FIXME
+    
+    // go through all bumps in the spectrum */       
+    while(first < last) {
+        bump = findBump(first, last, comp);
+        // No new bump found
+        if (bump.first == last) {
+            break;
+        }
+        
+        // calc full width if bump is low enough and has a minimal height
+        mspp_invariant(bump.first <= bump.second && bump.second < last, "Bump in illegal state.");
+        bumpHeight = get_int(std::max_element(bump.first, bump.second + 1, comp));       
+        if(SpectralPeak::lowness(bump.first, bump.second) >= requiredLowness && bumpHeight >= minimalPeakHeight) {
+            // we don't have to try for exceptions here, because a bump fulfills the preconditions
+            width = SpectralPeak::fullWidthAtFractionOfMaximum(bump.first, bump.second, fraction);
+            positionOfMaximum = get_mz(std::max_element(bump.first, bump.second + 1, comp));
+            MSPP_LOG(logDEBUG) << "measureFullWidths(): Measured peak (mz | width): (" << positionOfMaximum << " | " << width << ")";
+            widths.push_back(std::make_pair(positionOfMaximum, width));
+        }
+        
+        // last element of the bump may be the first of the next one
+        first = bump.second;
+    }
+    
+    return widths;
 }
 
 } /* namespace ms */
