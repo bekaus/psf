@@ -28,6 +28,7 @@
 #include "ms++/Log.h"
 
 #include "psf/PeakShapeFunction.h"
+#include <psf/Spectrum.h>
 #include "testdata.h"
 
 struct PsfTestSuite : vigra::test_suite {
@@ -122,10 +123,13 @@ struct PsfTestSuite : vigra::test_suite {
 
         // auto calibration
         MSPP_LOG(ms::logINFO) << "Calibrating orbitrap peak shape function.";
-        ms::SparseSpectrum spectrum(dirTestdata + "/PeakShapeFunctions/realistic_ms1.wsv");
+	ms::Spectrum spectrum;
+	loadSpectrumElements(spectrum,dirTestdata + "/PeakShapeFunctions/realistic_ms1.wsv");
+	ms::MzExtractor get_mz;
+	ms::IntensityExtractor get_int;
         
         orbi_psf.setA(0); // reset 
-        orbi_psf.calibrateFor(spectrum.begin(), spectrum.end());
+        orbi_psf.calibrateFor(get_mz, get_int, spectrum.begin(), spectrum.end());
         shouldEqualTolerance(orbi_psf.getA(), 1.19781e-06, 0.00001);       
     }
 
@@ -152,10 +156,13 @@ struct PsfTestSuite : vigra::test_suite {
 
         // auto calibration
         MSPP_LOG(ms::logINFO) << "Calibrating gaussian peak shape function.";
-        ms::SparseSpectrum spectrum(dirTestdata + "/PeakShapeFunctions/realistic_ms1.wsv");
+	ms::Spectrum spectrum;
+	loadSpectrumElements(spectrum,dirTestdata + "/PeakShapeFunctions/realistic_ms1.wsv");
+	ms::MzExtractor get_mz;
+	ms::IntensityExtractor get_int;
         
         gaussian_psf.setA(0); // reset 
-        gaussian_psf.calibrateFor(spectrum.begin(), spectrum.end());
+        gaussian_psf.calibrateFor(get_mz, get_int, spectrum.begin(), spectrum.end());
         shouldEqualTolerance(gaussian_psf.getA(), 0.031325, 0.000001);
     }
 

@@ -32,7 +32,6 @@
 #include <ms++/config.h>
 #include <ms++/Error.h>
 #include <ms++/Log.h>
-#include <ms++/SparseSpectrum.h>
 
 #include "psf/PeakParameter.h"
 #include "psf/PeakShape.h"
@@ -226,9 +225,7 @@ public:
     /**
      * Autocalibrate peak shape function parameters using regression.
      *
-     * Use this function to learn from a sequence of SparseSpectrum::Elements.
-     * To learn from a whole SparseSpectrum just set first to spectrum.begin() and last to
-     * spectrum.end().
+     * Use this function to learn from a sequence of spectrum elements.
      *
      * Note, that there is no internal error threshold or similar for the quality of the
      * calibration. The calibration is performed as long as it is possible in any way.
@@ -248,7 +245,8 @@ public:
      * @throw ms::Starvation To few or bad data extracted from the input spectrum to make a
      *                       calibration possible.
      */
-    void calibrateFor(SparseSpectrum::const_iterator first, SparseSpectrum::const_iterator last);
+    template< typename FwdIter, typename MzExtractor, typename IntensityExtractor >
+    void calibrateFor(const MzExtractor&, const IntensityExtractor&, FwdIter first, FwdIter last);
     
     // setMinimalPeakHeightForCalibration()
     /**
@@ -416,10 +414,11 @@ getB() const {
 
 // calibrateFor()
 template <typename PeakShapeT, typename PeakParameterT, ms::PeakShapeFunctionTypes PeakShapeFunctionTypeT>
+template< typename FwdIter, typename MzExtractor, typename IntensityExtractor >
 void
 PeakShapeFunctionTemplate<PeakShapeT, PeakParameterT, PeakShapeFunctionTypeT>::
-calibrateFor(SparseSpectrum::const_iterator first, SparseSpectrum::const_iterator last) {
-    peakparameter_.learnFrom(first, last);
+calibrateFor(const MzExtractor& get_mz, const IntensityExtractor& get_int, FwdIter first, FwdIter last) {
+  peakparameter_.learnFrom(get_mz, get_int, first, last);
 }
 
 // setMinimalPeakHeightForCalibration()
