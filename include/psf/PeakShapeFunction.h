@@ -161,7 +161,7 @@ class MSPP_EXPORT PeakShapeFunctionType
  * This generic implementation of the ms::PeakShapeFunction interface hast to be parameterized
  * by three template parameters.
  *
- * Use 'typedef PeakShapeFunctionTamplate<...> MyPeakShapeFunction' to implement new peak shape
+ * Use 'typedef PeakShapeFunctionTemplate<...> MyPeakShapeFunction' to implement new peak shape
  * functions quickly. Several peak shape functions defined in this way, can be found in the headerfile 'PeakShapeFunctions.h'.
  *
  * At the moment, this template supports up to two general paramters a,b to parameterize the
