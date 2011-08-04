@@ -10,7 +10,6 @@ SET(SRCS
     LorentzianPeakShape.cpp
     PeakShapeFunction.cpp
     QuadraticModel.cpp
-    SpectrumAlgorithm.cpp
     SqrtModel.cpp
 )
 

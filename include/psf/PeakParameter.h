@@ -31,7 +31,6 @@
 #include <ms++/Error.h>
 #include <ms++/Log.h>
 #include <ms++/SparseSpectrum.h>
-#include <psf/SpectralPeak.h>
 #include <psf/SpectrumAlgorithm.h>
 
 #include <vigra/windows.h>
