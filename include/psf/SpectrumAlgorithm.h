@@ -101,24 +101,6 @@ measureFullWidths(SparseSpectrum::const_iterator first, SparseSpectrum::const_it
 
 
 
-// class SpectrumSplitter
-/**
- * Breaks up a sparse spectrum at gaps.
- */
-class MSPP_EXPORT SpectrumSplitter
-{
-public:
-    std::vector<SparseSpectrum> operator()(SparseSpectrum& s, const double deltamz);
-private:
-    struct Diff {
-        double operator()(const SparseSpectrum::value_type& lhs, const SparseSpectrum::value_type& rhs) {
-            return(lhs.mz - rhs.mz);
-        }
-    };
-};
-
-
-
 /* implementation */
 
 // findBump()

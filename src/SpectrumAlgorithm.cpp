@@ -86,31 +86,3 @@ ms::measureFullWidths(SparseSpectrum::const_iterator first, SparseSpectrum::cons
     
     return widths;
 }
-
-
-
-// SpectrumSplitter::operator()()
-std::vector<ms::SparseSpectrum> ms::SpectrumSplitter::operator()(ms::SparseSpectrum& s, const double deltamz)
-{
-    // generate a diff vector
-    std::vector<double> diffvec(s.size() - 1);
-    std::transform(s.begin() + 1, s.end(), s.begin(), diffvec.begin(), ms::SpectrumSplitter::Diff());
-    // find entries larger than
-    std::vector<double>::iterator old = diffvec.begin();
-    std::vector<double>::iterator i = diffvec.begin();
-    std::vector<ms::SparseSpectrum> rr;
-    ms::SparseSpectrum::iterator first, last;
-    while ((i = find_if(i, diffvec.end(), std::not1(std::bind2nd(std::less<double>(), deltamz)))) != diffvec.end()) {
-        ++i;
-        first = last = s.begin();
-        std::advance(first, std::distance(diffvec.begin(), old));
-        std::advance(last, std::distance(diffvec.begin(), i));
-        rr.push_back(ms::SparseSpectrum(first, last));
-        old = i;
-    }
-    first = s.begin();
-    std::advance(first, std::distance(diffvec.begin(), old));
-    rr.push_back(ms::SparseSpectrum(first, s.end()));
-    return rr;
-}
-
