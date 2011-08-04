@@ -29,12 +29,14 @@
 
 #include <ms++/Error.h>
 #include <ms++/Log.h>
-#include <ms++/SparseSpectrum.h>
 #include <psf/SpectrumAlgorithm.h>
+#include <psf/Spectrum.h>
 
 #include "testdata.h"
 
 #include "unittest.hxx"
+
+using namespace ms;
 
 namespace std {
 ostream& operator<<(ostream& os, const pair<int*, int*>& p) {
@@ -108,46 +110,48 @@ struct SpectrumAlgorithmTestSuite : vigra::test_suite {
     void testMeasureFullWidths() {
         using namespace ms;
         using namespace std;
+	MzExtractor get_mz;
+	IntensityExtractor get_int;
 
-        // A sparse spectrum with three pure peaks and some noise.
+        // A spectrum with three pure peaks and some noise.
         // Peak# | lowness | full width 0.7 | full width 0.5 | full width 0.1
         // 1     | 30%     | 2              | nan            | nan
         // 2     | 50%     | 2              | 4              | nan
         // 3     | 90%     | 2              | 2              | 4
-        SparseSpectrum s1;
-        s1.push_back(SparseSpectrum::Element(1, 9));
-        s1.push_back(SparseSpectrum::Element(2, 8));
-        s1.push_back(SparseSpectrum::Element(2.9, 6.8));//Peak 1 left
-        s1.push_back(SparseSpectrum::Element(3, 7));  
-        s1.push_back(SparseSpectrum::Element(4, 10)); // Peak 1 max
-        s1.push_back(SparseSpectrum::Element(5, 7));
-        s1.push_back(SparseSpectrum::Element(5.1, 6.8));  // Peak 1 right
-        s1.push_back(SparseSpectrum::Element(6, 4.9));
-        s1.push_back(SparseSpectrum::Element(6.9, 4.9));  // Peak 2 left  
-        s1.push_back(SparseSpectrum::Element(7, 5));
-        s1.push_back(SparseSpectrum::Element(8, 7));  // ...
-        s1.push_back(SparseSpectrum::Element(9, 10)); // Peak 2 max
-        s1.push_back(SparseSpectrum::Element(10, 7)); // ...
-        s1.push_back(SparseSpectrum::Element(11, 5)); // ...
-        s1.push_back(SparseSpectrum::Element(12, 1));
-        s1.push_back(SparseSpectrum::Element(12.1, 0.9)); // Peak 2 right, Peak 3 left
-        s1.push_back(SparseSpectrum::Element(12.2, 1));
-        s1.push_back(SparseSpectrum::Element(13, 5)); // ...
-        s1.push_back(SparseSpectrum::Element(12.5, 7));//...
-        s1.push_back(SparseSpectrum::Element(14, 10)); // Peak 3
-        s1.push_back(SparseSpectrum::Element(14.5, 7));//...
-        s1.push_back(SparseSpectrum::Element(15, 5));  //...
-        s1.push_back(SparseSpectrum::Element(16, 1));
-        s1.push_back(SparseSpectrum::Element(16.1, 0.9)); // Peak 3 right
+        Spectrum s1;
+        s1.push_back(SpectrumElement(1, 9));
+        s1.push_back(SpectrumElement(2, 8));
+        s1.push_back(SpectrumElement(2.9, 6.8));//Peak 1 left
+        s1.push_back(SpectrumElement(3, 7));  
+        s1.push_back(SpectrumElement(4, 10)); // Peak 1 max
+        s1.push_back(SpectrumElement(5, 7));
+        s1.push_back(SpectrumElement(5.1, 6.8));  // Peak 1 right
+        s1.push_back(SpectrumElement(6, 4.9));
+        s1.push_back(SpectrumElement(6.9, 4.9));  // Peak 2 left  
+        s1.push_back(SpectrumElement(7, 5));
+        s1.push_back(SpectrumElement(8, 7));  // ...
+        s1.push_back(SpectrumElement(9, 10)); // Peak 2 max
+        s1.push_back(SpectrumElement(10, 7)); // ...
+        s1.push_back(SpectrumElement(11, 5)); // ...
+        s1.push_back(SpectrumElement(12, 1));
+        s1.push_back(SpectrumElement(12.1, 0.9)); // Peak 2 right, Peak 3 left
+        s1.push_back(SpectrumElement(12.2, 1));
+        s1.push_back(SpectrumElement(13, 5)); // ...
+        s1.push_back(SpectrumElement(12.5, 7));//...
+        s1.push_back(SpectrumElement(14, 10)); // Peak 3
+        s1.push_back(SpectrumElement(14.5, 7));//...
+        s1.push_back(SpectrumElement(15, 5));  //...
+        s1.push_back(SpectrumElement(16, 1));
+        s1.push_back(SpectrumElement(16.1, 0.9)); // Peak 3 right
    
-        typedef vector<pair<SparseSpectrum::Element::first_type,
-                            SparseSpectrum::Element::first_type
+        typedef vector<pair<typename MzExtractor::result_type,
+                            typename MzExtractor::result_type
                            > 
                       > MzWidthPair;
         MzWidthPair result;
     
         MSPP_LOG(logINFO) << "Testing fraction of 0.7 .";
-        result = measureFullWidths(s1.begin(), s1.end(), 0.7);
+        result = measureFullWidths(get_mz, get_int, s1.begin(), s1.end(), 0.7);
         shouldEqual(result.size(), (MzWidthPair::size_type)3);
         should(result.at(0).first == 4);
         shouldEqualTolerance(result.at(0).second, 2., 0.1);
@@ -157,7 +161,7 @@ struct SpectrumAlgorithmTestSuite : vigra::test_suite {
         shouldEqualTolerance(result.at(2).second, 2., 0.1);
 
         MSPP_LOG(logINFO) << "Testing fraction of 0.51 .";
-        result = measureFullWidths(s1.begin(), s1.end(), 0.51);
+        result = measureFullWidths(get_mz, get_int, s1.begin(), s1.end(), 0.51);
         shouldEqual(result.size(), (MzWidthPair::size_type)2);
         should(result.at(0).first == 9);
         shouldEqualTolerance(result.at(0).second, 4., 0.1);
@@ -165,70 +169,70 @@ struct SpectrumAlgorithmTestSuite : vigra::test_suite {
         shouldEqualTolerance(result.at(1).second, 2., 0.1);
 
         MSPP_LOG(logINFO) << "Testing fraction of 0.11 .";
-        result = measureFullWidths(s1.begin(), s1.end(), 0.11);
+        result = measureFullWidths(get_mz, get_int, s1.begin(), s1.end(), 0.11);
         shouldEqual(result.size(), (MzWidthPair::size_type)1);
         shouldEqual(result.at(0).first, 14);
         shouldEqualTolerance(result.at(0).second, 4., 0.1);
 
         MSPP_LOG(logINFO) << "Testing fraction of 0.001 .";
-        result = measureFullWidths(s1.begin(), s1.end(), 0.001);
+        result = measureFullWidths(get_mz, get_int, s1.begin(), s1.end(), 0.001);
         should(result.empty());
 
         // testing minimum intensity
-        result = measureFullWidths(s1.begin(), s1.end(), 0.7, 0);
+        result = measureFullWidths(get_mz, get_int, s1.begin(), s1.end(), 0.7, 0);
         shouldEqual(result.size(), (MzWidthPair::size_type)3);
-        result = measureFullWidths(s1.begin(), s1.end(), 0.7, 11);
+        result = measureFullWidths(get_mz, get_int, s1.begin(), s1.end(), 0.7, 11);
         shouldEqual(result.size(), (MzWidthPair::size_type)0);
 
         // test spectrum with no pure peaks
         MSPP_LOG(logINFO) << "Testing spectrum with no pure peaks.";
-        SparseSpectrum s_unpure;
-        s_unpure.push_back(SparseSpectrum::Element(1, 9));
-        s_unpure.push_back(SparseSpectrum::Element(2, 8));
-        s_unpure.push_back(SparseSpectrum::Element(4, 8));
-        s_unpure.push_back(SparseSpectrum::Element(5, 7));
-        result = measureFullWidths(s_unpure.begin(), s_unpure.end(), 0.5);
+        Spectrum s_unpure;
+        s_unpure.push_back(SpectrumElement(1, 9));
+        s_unpure.push_back(SpectrumElement(2, 8));
+        s_unpure.push_back(SpectrumElement(4, 8));
+        s_unpure.push_back(SpectrumElement(5, 7));
+        result = measureFullWidths(get_mz, get_int, s_unpure.begin(), s_unpure.end(), 0.5);
         should(result.empty());
 
         // test spectrum with duplicate mz values
         MSPP_LOG(logINFO) << "Testing spectrum with duplicate mz values.";
-        SparseSpectrum s_duplicate;
-        s_duplicate.push_back(SparseSpectrum::Element(1, 9));
-        s_duplicate.push_back(SparseSpectrum::Element(1, 9));
-        s_duplicate.push_back(SparseSpectrum::Element(1, 9));
-        result = measureFullWidths(s_duplicate.begin(), s_duplicate.end(), 0.5);
+        Spectrum s_duplicate;
+        s_duplicate.push_back(SpectrumElement(1, 9));
+        s_duplicate.push_back(SpectrumElement(1, 9));
+        s_duplicate.push_back(SpectrumElement(1, 9));
+        result = measureFullWidths(get_mz, get_int, s_duplicate.begin(), s_duplicate.end(), 0.5);
         should(result.empty());
 
-        s_duplicate.push_back(SparseSpectrum::Element(6.9, 4.9));  // Peak left  
-        s_duplicate.push_back(SparseSpectrum::Element(7, 5));
-        s_duplicate.push_back(SparseSpectrum::Element(8, 7));  // ...
-        s_duplicate.push_back(SparseSpectrum::Element(9, 10)); // Peak max
-        s_duplicate.push_back(SparseSpectrum::Element(10, 7)); // ...
-        s_duplicate.push_back(SparseSpectrum::Element(11, 5)); // ...
-        s_duplicate.push_back(SparseSpectrum::Element(12, 1));
-        s_duplicate.push_back(SparseSpectrum::Element(12.1, 0.9)); // Peak right
-        result = measureFullWidths(s_duplicate.begin(), s_duplicate.end(), 0.51);
+        s_duplicate.push_back(SpectrumElement(6.9, 4.9));  // Peak left  
+        s_duplicate.push_back(SpectrumElement(7, 5));
+        s_duplicate.push_back(SpectrumElement(8, 7));  // ...
+        s_duplicate.push_back(SpectrumElement(9, 10)); // Peak max
+        s_duplicate.push_back(SpectrumElement(10, 7)); // ...
+        s_duplicate.push_back(SpectrumElement(11, 5)); // ...
+        s_duplicate.push_back(SpectrumElement(12, 1));
+        s_duplicate.push_back(SpectrumElement(12.1, 0.9)); // Peak right
+        result = measureFullWidths(get_mz, get_int, s_duplicate.begin(), s_duplicate.end(), 0.51);
         shouldEqual(result.size(), (MzWidthPair::size_type)1);
         should(result.at(0).first == 9);
         shouldEqualTolerance(result.at(0).second, 4., 0.1);
 
-        s_duplicate.push_back(SparseSpectrum::Element(12.1, 0.9));
-        s_duplicate.push_back(SparseSpectrum::Element(12.1, 0.9));
-        result = measureFullWidths(s_duplicate.begin(), s_duplicate.end(), 0.51);
+        s_duplicate.push_back(SpectrumElement(12.1, 0.9));
+        s_duplicate.push_back(SpectrumElement(12.1, 0.9));
+        result = measureFullWidths(get_mz, get_int, s_duplicate.begin(), s_duplicate.end(), 0.51);
         shouldEqual(result.size(), (MzWidthPair::size_type)1);
         should(result.at(0).first == 9);
         shouldEqualTolerance(result.at(0).second, 4., 0.1);
         
         // test empty spectrum
         MSPP_LOG(logINFO) << "Testing with empty spectrum.";
-        SparseSpectrum s_empty;
-        result = measureFullWidths(s_empty.begin(), s_empty.end(), 0.5);
+        Spectrum s_empty;
+        result = measureFullWidths(get_mz, get_int, s_empty.begin(), s_empty.end(), 0.5);
         should(result.empty());
 
         // test fraction range
         bool thrown = false;
         try {
-            measureFullWidths(s1.begin(), s1.end(), 0.);
+            measureFullWidths(get_mz, get_int, s1.begin(), s1.end(), 0.);
         }
         catch(const PreconditionViolation& e) {
 			MSPP_UNUSED(e);
@@ -238,7 +242,7 @@ struct SpectrumAlgorithmTestSuite : vigra::test_suite {
         thrown = false;
 
         try {
-            measureFullWidths(s1.begin(), s1.end(), 1.);
+            measureFullWidths(get_mz, get_int, s1.begin(), s1.end(), 1.);
         }
         catch(const PreconditionViolation& e) {
 			MSPP_UNUSED(e);
@@ -248,7 +252,7 @@ struct SpectrumAlgorithmTestSuite : vigra::test_suite {
         thrown = false;
 
         try {
-            measureFullWidths(s1.begin(), s1.end(), -0.3);
+            measureFullWidths(get_mz, get_int, s1.begin(), s1.end(), -0.3);
         }
         catch(const PreconditionViolation& e) {
 			MSPP_UNUSED(e);
@@ -258,7 +262,7 @@ struct SpectrumAlgorithmTestSuite : vigra::test_suite {
         thrown = false;
 
         try {
-            measureFullWidths(s1.begin(), s1.end(), 1.3);
+            measureFullWidths(get_mz, get_int, s1.begin(), s1.end(), 1.3);
         }
         catch(const PreconditionViolation& e) {
 			MSPP_UNUSED(e);
@@ -268,8 +272,9 @@ struct SpectrumAlgorithmTestSuite : vigra::test_suite {
         thrown = false;
 
         MSPP_LOG(logINFO) << "Testing with realistic spectrum.";
-        SparseSpectrum spectrum(dirTestdata + "/SpectrumAlgorithm/realistic_ms1.wsv");
-        result = measureFullWidths(spectrum.begin(), spectrum.end(), 0.5);
+	Spectrum spectrum;
+	loadSpectrumElements(spectrum, dirTestdata + "/SpectrumAlgorithm/realistic_ms1.wsv");
+        result = measureFullWidths(get_mz, get_int, spectrum.begin(), spectrum.end(), 0.5);
         /* result should be: (manually validated)
         879.98 0.0443713
         880.24 0.0195839
@@ -313,7 +318,7 @@ struct SpectralPeakTestSuite : vigra::test_suite {
     }
 
     void testHeight() {
-	IntensityExtractor get_int;
+        IntensityExtractor get_int;
         // A peak with height 3.1
         Spectrum s1;
         s1.push_back(SpectrumElement(1.1, 1.1));

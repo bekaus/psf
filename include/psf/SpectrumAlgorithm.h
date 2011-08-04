@@ -24,6 +24,7 @@
 #define __SPECTRUMALGORITHM_H__
 #include <ms++/config.h>
 
+#include <algorithm>
 #include <iterator>
 #include <utility>
 #include <vector>
@@ -31,10 +32,43 @@
 #include <ms++/Log.h>
 #include <ms++/Error.h>
 
-#include <psf/Predicates.h>
-
 namespace ms
 {
+
+// class LessByExtractor
+/**
+ * Compare two elements with regard to a certain aspect.
+ *
+ * Typically, an element in a spectrum represents more than one value 
+ * (such as m/z, intensity, time etc.) Use this functor to compare two
+ * elements with regard to one of these values.
+ */
+template< typename Element, typename Extractor >
+class MSPP_EXPORT LessByExtractor {
+  public:
+  LessByExtractor( const Extractor& e ) : extract_(e) {};
+  bool operator()( const Element& lhs, const Element& rhs ) const {
+    return extract_(lhs) < extract_(rhs);    
+  };
+
+  private:
+  Extractor extract_;
+};
+
+template< typename Element, typename Extractor >
+class MSPP_EXPORT MoreThanValue {
+   public:
+   MoreThanValue( const Extractor& e, typename Extractor::result_type val ) : extract_(e), val_(val) {};
+   bool operator()( const Element& e ) const {
+     return val_ < extract_(e);    
+  };
+
+  private:
+  Extractor extract_;
+  typename Extractor::result_type val_;
+};
+
+
 
 // findBump()
 /**
@@ -303,7 +337,7 @@ std::pair<FwdIter, FwdIter> findBump(FwdIter first, FwdIter last, Compare comp) 
 // measureFullWidths()
 template<typename FwdIter, typename MzExtractor, typename IntensityExtractor> 
 std::vector<std::pair<typename MzExtractor::result_type, typename MzExtractor::result_type> > 
-measureFullWidths(const MzExtractor&, const IntensityExtractor&, FwdIter first, FwdIter last, double fraction, typename IntensityExtractor::result_type minimalPeakHeight = 0) {
+measureFullWidths(const MzExtractor& get_mz, const IntensityExtractor& get_int, FwdIter first, FwdIter last, double fraction, typename IntensityExtractor::result_type minimalPeakHeight = 0) {
     typedef typename MzExtractor::result_type Mz;
     typedef typename IntensityExtractor::result_type Intensity;
 
@@ -323,8 +357,8 @@ measureFullWidths(const MzExtractor&, const IntensityExtractor&, FwdIter first, 
     std::pair<FwdIter, FwdIter> bump;
     Mz positionOfMaximum = 0;
     Intensity bumpHeight = 0;    
-    Mz width = 0;  
-    SparseSpectrum::LessThanAbundance<SparseSpectrum::Element, SparseSpectrum::Element> comp; // FIXME
+    Mz width = 0;
+    LessByExtractor< typename IntensityExtractor::element_type, IntensityExtractor > comp(get_int);
     
     // go through all bumps in the spectrum */       
     while(first < last) {
@@ -336,11 +370,11 @@ measureFullWidths(const MzExtractor&, const IntensityExtractor&, FwdIter first, 
         
         // calc full width if bump is low enough and has a minimal height
         mspp_invariant(bump.first <= bump.second && bump.second < last, "Bump in illegal state.");
-        bumpHeight = get_int(std::max_element(bump.first, bump.second + 1, comp));       
-        if(SpectralPeak::lowness(bump.first, bump.second) >= requiredLowness && bumpHeight >= minimalPeakHeight) {
+        bumpHeight = get_int(*std::max_element(bump.first, bump.second + 1, comp));       
+        if(SpectralPeak::lowness(get_int, bump.first, bump.second) >= requiredLowness && bumpHeight >= minimalPeakHeight) {
             // we don't have to try for exceptions here, because a bump fulfills the preconditions
-            width = SpectralPeak::fullWidthAtFractionOfMaximum(bump.first, bump.second, fraction);
-            positionOfMaximum = get_mz(std::max_element(bump.first, bump.second + 1, comp));
+	  width = SpectralPeak::fullWidthAtFractionOfMaximum(get_mz, get_int, bump.first, bump.second, fraction);
+            positionOfMaximum = get_mz(*std::max_element(bump.first, bump.second + 1, comp));
             MSPP_LOG(logDEBUG) << "measureFullWidths(): Measured peak (mz | width): (" << positionOfMaximum << " | " << width << ")";
             widths.push_back(std::make_pair(positionOfMaximum, width));
         }
