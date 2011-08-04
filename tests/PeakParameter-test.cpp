@@ -27,6 +27,7 @@
 #include <ms++/config.h>
 #include <ms++/Error.h>
 #include <psf/PeakParameter.h>
+#include <psf/Spectrum.h>
 
 #include "testdata.h"
 
@@ -426,25 +427,31 @@ struct PeakParameterTestSuite : vigra::test_suite {
     void testConstantFwhmLearnFrom() {
         using namespace ms;
         using namespace std;
+	MzExtractor get_mz;
+	IntensityExtractor get_int;
         MSPP_LOG(logINFO) << "Testing ConstantFwhm learnFrom().";
         ConstantFwhm fwhm;
-        SparseSpectrum spectrum(dirTestdata + "/PeakParameter/realistic_ms1.wsv");
+	Spectrum spectrum;
+        loadSpectrumElements(spectrum, dirTestdata + "/PeakParameter/realistic_ms1.wsv");
         
         fwhm.setA(0); // reset A
-        fwhm.learnFrom(spectrum.begin(), spectrum.end());
+        fwhm.learnFrom(get_mz, get_int, spectrum.begin(), spectrum.end());
         shouldEqualTolerance(fwhm.getA(), 0.031325, 0.000001);
     }
 
     void testOrbitrapFwhmLearnFrom() {
         using namespace ms;
         using namespace std;
+	MzExtractor get_mz;
+	IntensityExtractor get_int;
         MSPP_LOG(logINFO) << "Testing OrbitrapFwhm learnFrom().";
         OrbitrapFwhm fwhm;
-        SparseSpectrum spectrum(dirTestdata + "/shared_data/orbi_ms1.wsv");
+	Spectrum spectrum;
+        loadSpectrumElements(spectrum, dirTestdata + "/shared_data/orbi_ms1.wsv");
         
         fwhm.setA(0); // reset 
         fwhm.setB(0);
-        fwhm.learnFrom(spectrum.begin(), spectrum.end());
+        fwhm.learnFrom(get_mz, get_int, spectrum.begin(), spectrum.end());
         shouldEqualTolerance(fwhm.getA(), 9.40679e-06, 0.00001);
         shouldEqualTolerance(fwhm.getB(), 0., 0.);
     }
@@ -452,13 +459,17 @@ struct PeakParameterTestSuite : vigra::test_suite {
     void testFtIcrFwhmLearnFrom() {
         using namespace ms;
         using namespace std;
+	MzExtractor get_mz;
+	IntensityExtractor get_int;
         MSPP_LOG(logINFO) << "Testing FtIcrFwhm learnFrom()."; 
         FtIcrFwhm fwhm;
-        SparseSpectrum spectrum(dirTestdata + "/PeakParameter/realistic_ms1.wsv");
+	Spectrum spectrum;
+        loadSpectrumElements(spectrum, dirTestdata + "/PeakParameter/realistic_ms1.wsv");
+
         
         fwhm.setA(0); // reset 
         fwhm.setB(0);
-        fwhm.learnFrom(spectrum.begin(), spectrum.end());
+        fwhm.learnFrom(get_mz, get_int, spectrum.begin(), spectrum.end());
         MSPP_LOG(logINFO) << "Learned FtIcrFwhm Parameter A: " << fwhm.getA();
         MSPP_LOG(logINFO) << "Learned FtIcrFwhm Parameter B: " << fwhm.getB();
         shouldEqualTolerance(fwhm.getA(), 0., 0.00001);
@@ -468,13 +479,16 @@ struct PeakParameterTestSuite : vigra::test_suite {
     void testTofFwhmLearnFrom() {
         using namespace ms;
         using namespace std;
+	MzExtractor get_mz;
+	IntensityExtractor get_int;
         MSPP_LOG(logINFO) << "Testing TofFwhm learnFrom().";
         TofFwhm fwhm;
-        SparseSpectrum spectrum(dirTestdata + "/PeakParameter/realistic_ms1.wsv");
+	Spectrum spectrum;
+        loadSpectrumElements(spectrum, dirTestdata + "/PeakParameter/realistic_ms1.wsv");
         
         fwhm.setA(0); // reset 
         fwhm.setB(0);
-        fwhm.learnFrom(spectrum.begin(), spectrum.end());
+        fwhm.learnFrom(get_mz, get_int, spectrum.begin(), spectrum.end());
         shouldEqualTolerance(fwhm.getA(), 0., 0.00001);
         shouldEqualTolerance(fwhm.getB(), 0.031325, 0.0001);
     }

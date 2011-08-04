@@ -30,7 +30,6 @@
 
 #include <ms++/Error.h>
 #include <ms++/Log.h>
-#include <ms++/SparseSpectrum.h>
 #include <psf/SpectrumAlgorithm.h>
 
 #include <vigra/windows.h>
@@ -474,9 +473,7 @@ public:
     /**
      * Calibrates the internal model for a specific mass spectrum.
      *
-     * Use this function to learn from a sequence of SparseSpectrum::Elements.
-     * To learn from a whole SparseSpectrum just set first to spectrum.begin() and last to
-     * spectrum.end().
+     * Use this function to learn from a sequence of spectrum elements.
      *
      * Note, that there is no internal error threshold or similar for the quality of the
      * calibration. The calibration is performed as long as it is possible in any way.
@@ -493,7 +490,8 @@ public:
      * @throw ms::Starvation To few or bad data extracted from the input sequence to make a
      *                       calibration possible.
      */
-    void learnFrom(SparseSpectrum::const_iterator first, SparseSpectrum::const_iterator last);
+    template< typename FwdIter, typename MzExtractor, typename IntensityExtractor >
+    void learnFrom(const MzExtractor&, const IntensityExtractor&, FwdIter first, FwdIter last);
 
     // setMinimalPeakHeightToLearnFrom()
     /**
@@ -513,9 +511,6 @@ private:
     static const double fractionOfMaximum_;
 
     double minimalPeakHeightToLearnFrom_; 
-    
-    typedef std::pair<SparseSpectrum::Element::first_type, SparseSpectrum::Element::first_type> MzWidthPair_;
-    typedef std::vector<MzWidthPair_> MzWidthPairs_;
 
     /**
      * Fit the parameter model to measured mz-width pairs.
@@ -530,7 +525,8 @@ private:
      * @throw ms::PreconditionViolation Parameter pairs is an empty vector.
      * @throw ms::InvariantViolation Numerical regression algorithm failed.
      */
-    void learn_(const MzWidthPairs_& pairs);
+    template< typename MzExtractor >
+    void learn_(const std::vector<std::pair<typename MzExtractor::result_type, typename MzExtractor::result_type> >& pairs);
 };
 
 /**
@@ -571,11 +567,13 @@ const double PeakParameterFwhm<ParameterModel>::fractionOfMaximum_ = 0.5;
 
 // learnFrom()
 template <typename ParameterModel>
-void PeakParameterFwhm<ParameterModel>::learnFrom(SparseSpectrum::const_iterator first, SparseSpectrum::const_iterator last) {
+template< typename FwdIter, typename MzExtractor, typename IntensityExtractor >
+void PeakParameterFwhm<ParameterModel>::learnFrom(const MzExtractor& get_mz, const IntensityExtractor& get_int, FwdIter first, FwdIter last) {
     using namespace std;
+    typedef std::vector<std::pair<typename MzExtractor::result_type, typename MzExtractor::result_type> > MzWidthPairs_;
  
     // sample some FWHMs from the spectrum
-    MzWidthPairs_ pairs = measureFullWidths(first, last, fractionOfMaximum_, getMinimalPeakHeightToLearnFrom());        
+    MzWidthPairs_ pairs = measureFullWidths(get_mz, get_int, first, last, fractionOfMaximum_, getMinimalPeakHeightToLearnFrom());        
 
     if(pairs.empty()) {
         throw ms::Starvation("PeakParameterFwhm::learnFrom(): No (Mz | FWHM) could be measured in input spectrum to learn from.");
@@ -583,7 +581,7 @@ void PeakParameterFwhm<ParameterModel>::learnFrom(SparseSpectrum::const_iterator
 
     // fit the PeakParameterModel to the measured data
     try {
-        learn_(pairs);
+        learn_<MzExtractor>(pairs);
     } catch(const ms::InvariantViolation& e) {
 		MSPP_UNUSED(e);
         MSPP_LOG(logWARNING) << "PeakParameterFwhm::learnFrom(): Numerical regression failed.";
@@ -605,8 +603,10 @@ double PeakParameterFwhm<ParameterModel>::getMinimalPeakHeightToLearnFrom() {
 
 // learn_()
 template <typename ParameterModel>
-void PeakParameterFwhm<ParameterModel>::learn_(const MzWidthPairs_& pairs) {
+template< typename MzExtractor >
+void PeakParameterFwhm<ParameterModel>::learn_(const std::vector<std::pair<typename MzExtractor::result_type, typename MzExtractor::result_type> >& pairs) {
     using namespace vigra;
+    typedef std::vector<std::pair<typename MzExtractor::result_type, typename MzExtractor::result_type> > MzWidthPairs_;
     mspp_precondition(pairs.empty() == false, "PeakParameterFwhm::learn_(): Called with empty input vector. This is not supposed to happen. A bug in the code preceding the call of learn_ probably caused it.");
 
     // We now fit the PeakParameterModel to the spectrum using linear regression.    
@@ -633,7 +633,7 @@ void PeakParameterFwhm<ParameterModel>::learn_(const MzWidthPairs_& pairs) {
 
     // Calc GeneralizedSlope for every measured pair and store it as rows of A
     // Store the measured width in b
-    for(MzWidthPairs_::size_type pairIndex = 0; pairIndex < pairs.size(); ++pairIndex) {
+    for(typename MzWidthPairs_::size_type pairIndex = 0; pairIndex < pairs.size(); ++pairIndex) {
         slope = this->ParameterModel::slopeInParameterSpaceFor(pairs[pairIndex].first);
 
         // copy the slope into a row of A
