@@ -23,6 +23,10 @@
 #ifndef __SPECTRUM_H__
 #define __SPECTRUM_H__
 
+#include <fstream>
+#include <istream>
+#include <string>
+
 /**
  * @page spectrum Spectrum Sample Implementation
  *
@@ -93,6 +97,24 @@ struct IntensityExtractor {
  * A mass spectrum is a sequence of SpectrumElements ordered by mz.
  */ 
 typedef std::vector<SpectrumElement> Spectrum;
+
+std::istream& operator>>(std::istream& is, Spectrum& s) {
+    double mz, intensity;
+    if (is.good()) {
+        while (is >> mz >> intensity) {
+	    s.push_back(SpectrumElement(mz, intensity));
+        }
+    }
+    return is;
+}
+
+void loadSpectrumElements(Spectrum& s, const std::string& filename){
+    std::ifstream ifs(filename.c_str());
+    if (ifs.good()) {
+        ifs >> s;
+    }
+}
+
 
 } /* namespace ms */
 
