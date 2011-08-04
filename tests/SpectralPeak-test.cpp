@@ -65,64 +65,65 @@ struct SpectralPeakTestSuite : vigra::test_suite {
     }
 
     void testLowness() {
+	IntensityExtractor get_int;
         // A quite normal spectral peak.
         //
         // The maximum abundance is 3.1
         // The lowest abundance on the 'left' is 1.1 and on the 'right' 0.98.
         // So, the lowness is (1 - 1.1/3.1) = 0.64516129.
-        SparseSpectrum s1;
-        s1.push_back(SparseSpectrum::Element(1.1, 1.1));
-        s1.push_back(SparseSpectrum::Element(1.2, 1.9));
-        s1.push_back(SparseSpectrum::Element(1.4, 3.1));
-        s1.push_back(SparseSpectrum::Element(1.5, 2.2));
-        s1.push_back(SparseSpectrum::Element(1.69, 1.14));
-        s1.push_back(SparseSpectrum::Element(1.76, 0.98));
+        Spectrum s1;
+        s1.push_back(SpectrumElement(1.1, 1.1));
+        s1.push_back(SpectrumElement(1.2, 1.9));
+        s1.push_back(SpectrumElement(1.4, 3.1));
+        s1.push_back(SpectrumElement(1.5, 2.2));
+        s1.push_back(SpectrumElement(1.69, 1.14));
+        s1.push_back(SpectrumElement(1.76, 0.98));
 
-        shouldEqual(SpectralPeak::lowness(s1.begin(), --(s1.end())), 1-(1.1/3.1));      
+        shouldEqual(SpectralPeak::lowness(get_int, s1.begin(), --(s1.end())), 1-(1.1/3.1));      
 
         // A peak with only one 'flank'.
         //
         // Lowness of a one flanked peak is 0.0.
-        SparseSpectrum s5;
-        s5.push_back(SparseSpectrum::Element(1.1, 1.1));
-        s5.push_back(SparseSpectrum::Element(1.2, 1.9));
-        s5.push_back(SparseSpectrum::Element(1.4, 3.1));
-        s5.push_back(SparseSpectrum::Element(1.5, 5.2));
+        Spectrum s5;
+        s5.push_back(SpectrumElement(1.1, 1.1));
+        s5.push_back(SpectrumElement(1.2, 1.9));
+        s5.push_back(SpectrumElement(1.4, 3.1));
+        s5.push_back(SpectrumElement(1.5, 5.2));
 
-        shouldEqual(SpectralPeak::lowness(s5.begin(), --(s5.end())), 0.0);     
+        shouldEqual(SpectralPeak::lowness(get_int, s5.begin(), --(s5.end())), 0.0);     
 
         // An equiabundant sequence.
         //
         // The lowness of an equiabundant sequence is 0.0.
-        SparseSpectrum s2;
-        s2.push_back(SparseSpectrum::Element(1.1, 1.1));
-        s2.push_back(SparseSpectrum::Element(1.2, 1.1));
-        s2.push_back(SparseSpectrum::Element(1.4, 1.1));
-        s2.push_back(SparseSpectrum::Element(1.5, 1.1));
+        Spectrum s2;
+        s2.push_back(SpectrumElement(1.1, 1.1));
+        s2.push_back(SpectrumElement(1.2, 1.1));
+        s2.push_back(SpectrumElement(1.4, 1.1));
+        s2.push_back(SpectrumElement(1.5, 1.1));
 
-        shouldEqual(SpectralPeak::lowness(s2.begin(), --(s2.end())), 0.0);  
+        shouldEqual(SpectralPeak::lowness(get_int, s2.begin(), --(s2.end())), 0.0);  
 
         // Quite unrealistic peak, with zero abundance elements
         //
         // Lowness is than a straight 1.0.
-        SparseSpectrum s6;
-        s6.push_back(SparseSpectrum::Element(1.1, 0.1));
-        s6.push_back(SparseSpectrum::Element(1.2, 0.0));
-        s6.push_back(SparseSpectrum::Element(1.4, 1.1));
-        s6.push_back(SparseSpectrum::Element(1.5, 1.2));
-        s6.push_back(SparseSpectrum::Element(1.7, 0.0));
-        s6.push_back(SparseSpectrum::Element(1.9, 1.1));
-        s6.push_back(SparseSpectrum::Element(2.12, 0.9));
+        Spectrum s6;
+        s6.push_back(SpectrumElement(1.1, 0.1));
+        s6.push_back(SpectrumElement(1.2, 0.0));
+        s6.push_back(SpectrumElement(1.4, 1.1));
+        s6.push_back(SpectrumElement(1.5, 1.2));
+        s6.push_back(SpectrumElement(1.7, 0.0));
+        s6.push_back(SpectrumElement(1.9, 1.1));
+        s6.push_back(SpectrumElement(2.12, 0.9));
 
-        shouldEqual(SpectralPeak::lowness(s6.begin(), --(s6.end())), 1.0);
+        shouldEqual(SpectralPeak::lowness(get_int, s6.begin(), --(s6.end())), 1.0);
 
         // Only one element.
         //
         // The lowness of one element is 0.0.
-        SparseSpectrum s3;
-        s3.push_back(SparseSpectrum::Element(123.32, 89.1));
+        Spectrum s3;
+        s3.push_back(SpectrumElement(123.32, 89.1));
 
-        shouldEqual(SpectralPeak::lowness(s3.begin(), --(s3.end())), 0.0);
+        shouldEqual(SpectralPeak::lowness(get_int, s3.begin(), --(s3.end())), 0.0);
     }
 
     void testFullWidthAtFractionOfMaximum() {

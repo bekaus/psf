@@ -34,32 +34,6 @@
 using namespace std;
 using namespace ms;
 
-// lowness()
-double ms::SpectralPeak::lowness(SparseSpectrum::const_iterator firstElement, SparseSpectrum::const_iterator lastElement) {
-    // comply to STL standards.
-    SparseSpectrum::const_iterator last = lastElement;
-    ++last;    
-
-    // Compare elements by abundance
-    SparseSpectrum::LessThanAbundance<SparseSpectrum::Element, SparseSpectrum::Element> comp; 
-
-    // find maximum abundance
-    SparseSpectrum::const_iterator maximum = max_element(firstElement, last, comp);
-
-    // find least abundant element right of the maximum
-    SparseSpectrum::const_iterator rightMinimum = min_element(maximum, last, comp);
-    // and to the left (both times with the maximum included as possible minimum)
-    SparseSpectrum::const_iterator leftMinimum = min_element(firstElement, ++maximum, comp);
-    --maximum; // STL required [first, last)
-
-    // more abundant element of the two
-    SparseSpectrum::Element moreAbundantOne = max(*leftMinimum, *rightMinimum, comp);
-
-    return 1. - (moreAbundantOne.abundance/maximum->abundance);
-}
-
-
-
 // fullWidthAtFractionOfMaximum(): private implementation details
 namespace 
 {

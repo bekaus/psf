@@ -25,6 +25,8 @@
 #ifndef __SPECTRALPEAK_H__
 #define __SPECTRALPEAK_H__
 
+#include <algorithm>
+
 #include <ms++/config.h>
 #include <ms++/SparseSpectrum.h>
 #include <psf/SpectrumAlgorithm.h>
@@ -98,7 +100,9 @@ namespace SpectralPeak
       *
       * @author Bernhard Kausler <bernhard.kausler@iwr.uni-heidelberg.de>
       */
-    MSPP_EXPORT double lowness(SparseSpectrum::const_iterator firstElement, SparseSpectrum::const_iterator lastElement);
+    template< typename FwdIter, typename IntensityExtractor >
+    MSPP_EXPORT 
+    double lowness(const IntensityExtractor&, FwdIter firstElement, FwdIter lastElement);
 
     // SpectralPeak::fullWidthAtFractionOfMaximum()
     /**
@@ -154,6 +158,33 @@ SpectralPeak::height(const IntensityExtractor& get_int, FwdIter firstElement, Fw
     FwdIter maximum = max_element(firstElement, ++lastElement, comp);
 
     return get_int(*maximum);
+}
+
+
+
+// lowness()
+template< typename FwdIter, typename IntensityExtractor >
+double ms::SpectralPeak::lowness(const IntensityExtractor& get_int, FwdIter firstElement, FwdIter lastElement) {
+    // comply to STL standards.
+    FwdIter last = lastElement;
+    ++last;    
+
+    // Compare elements by intensity
+    LessByExtractor<typename IntensityExtractor::element_type, IntensityExtractor> comp(get_int);
+
+    // find maximum intensity
+    FwdIter maximum = max_element(firstElement, last, comp);
+
+    // find least abundant element right of the maximum
+    FwdIter rightMinimum = min_element(maximum, last, comp);
+    // and to the left (both times with the maximum included as possible minimum)
+    FwdIter leftMinimum = min_element(firstElement, ++maximum, comp);
+    --maximum; // STL required [first, last)
+
+    // more abundant element of the two
+    typename IntensityExtractor::element_type moreAbundantOne = std::max(*leftMinimum, *rightMinimum, comp);
+
+    return 1. - (get_int(moreAbundantOne)/get_int(*maximum));
 }
 
 } /* namespace ms */
