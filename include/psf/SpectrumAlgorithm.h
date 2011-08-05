@@ -141,8 +141,8 @@ measureFullWidths(const MzExtractor&, const IntensityExtractor&, FwdIter first, 
  * A spectral peak is a single peak in a mass spectrum; in contrary to a monoisotopic peak,
  * which represents a whole isotope pattern.
  *
- * A spectral peak is represented as a sequence of ms::SparseSpectrum::Element. The
- * algorithms work with iterators on this sequence. The Elements have to be in ascending
+ * A spectral peak is represented as a sequence of spectrum elements. The
+ * algorithms work with iterators on this sequence. The elements have to be in ascending
  * order of their m/z values.
  * There are no further requirements to constitute a sequence a spectral peak. For 
  * example, even a set of equiabundant elements can be seen as a spectral peak.
@@ -443,12 +443,12 @@ namespace
  * be exactly on or above the target abundance. If these preconditions are not met,
  * the behaviour is undefined.
  *
- * @param firstElement Input const_iterator to the first SparseSpectrum::Element of the sequence to be searched.
- * @param above Input const_iterator to the SparseSpectrum::Element on or above the target abundance. The distance 
+ * @param firstElement Input const_iterator to the first spectrum element of the sequence to be searched.
+ * @param above Input const_iterator to the spectrum element on or above the target abundance. The distance 
  *              above - firstElement may not be negative. Else, the behaviour is undefined.
  * @param target The target abundance
  *
- * @return The SparseSpectrum::Element below the target abundance nearest (in mz dimension) to the above Element.
+ * @return The element below the target abundance nearest (in mz dimension) to the above Element.
  *         Is the above Element exactly on the target, below is the same as the above Element.
  *
  * @throw ms::Starvation No Element below found.

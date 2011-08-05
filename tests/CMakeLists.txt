@@ -22,7 +22,7 @@ MACRO(ADD_PSF_TEST name exe src)
     #build the test
     ADD_EXECUTABLE(${exe} ${src})
     #link the test
-    TARGET_LINK_LIBRARIES(${exe} ms++ psf)
+    TARGET_LINK_LIBRARIES(${exe} psf)
     
     #add test to global list of unit test
     ADD_TEST(${name} ${exe})
