@@ -1,11 +1,11 @@
 #ifndef __MODELMATRIX_H__
 #define __MODELMATRIX_H__
-#include <ms++/config.h>
+#include <psf/config.h>
 
 #include <vigra/matrix.hxx>
 
 /**
- * Typedef to keep the ms++ interface clean of VIGRA code
+ * Typedef to keep the psf interface clean of VIGRA code
  */
 namespace psf
 {
