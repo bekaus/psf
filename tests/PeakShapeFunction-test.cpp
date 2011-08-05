@@ -47,42 +47,42 @@ struct PsfTestSuite : vigra::test_suite {
 
     void testPsfTypeEnum() {
         // there should be six different enum values: box, gaussian, orbi, orbiBox, orbiConst, tof
-        MSPP_LOG(ms::logINFO) << "Testing the PeakShapeFunctionType enum.";
-        ms::PeakShapeFunctionTypes t;
-        t = ms::box;
-        t = ms::gaussian;
-        t = ms::orbi;
-        t = ms::orbiBox;
-        t = ms::tof;
+        PSF_LOG(psf::logINFO) << "Testing the PeakShapeFunctionType enum.";
+        psf::PeakShapeFunctionTypes t;
+        t = psf::box;
+        t = psf::gaussian;
+        t = psf::orbi;
+        t = psf::orbiBox;
+        t = psf::tof;
     }
 
 
     void testPeakShapeFunctionType() {
-        MSPP_LOG(ms::logINFO) << "Testing class PeakShapeFunctionType";
+        PSF_LOG(psf::logINFO) << "Testing class PeakShapeFunctionType";
 
-        ms::PeakShapeFunctionType psfBox = ms::box;
-        shouldEqual(psfBox.toEnum(), ms::box);
+        psf::PeakShapeFunctionType psfBox = psf::box;
+        shouldEqual(psfBox.toEnum(), psf::box);
         should(psfBox.toString() == "box");
 
-        ms::PeakShapeFunctionType psfGaussian = ms::gaussian;
-        shouldEqual(psfGaussian.toEnum(), ms::gaussian);
+        psf::PeakShapeFunctionType psfGaussian = psf::gaussian;
+        shouldEqual(psfGaussian.toEnum(), psf::gaussian);
         should(psfGaussian.toString() == "gaussian");
 
-        ms::PeakShapeFunctionType psfOrbi = ms::orbi;
-        shouldEqual(psfOrbi.toEnum(), ms::orbi);
+        psf::PeakShapeFunctionType psfOrbi = psf::orbi;
+        shouldEqual(psfOrbi.toEnum(), psf::orbi);
         should(psfOrbi.toString() == "orbi");
 
-        ms::PeakShapeFunctionType psfOrbiBox = ms::orbiBox;
-        shouldEqual(psfOrbiBox.toEnum(), ms::orbiBox);
+        psf::PeakShapeFunctionType psfOrbiBox = psf::orbiBox;
+        shouldEqual(psfOrbiBox.toEnum(), psf::orbiBox);
         should(psfOrbiBox.toString() == "orbiBox");
 
-        ms::PeakShapeFunctionType psfTof = ms::tof;
-        shouldEqual(psfTof.toEnum(), ms::tof);
+        psf::PeakShapeFunctionType psfTof = psf::tof;
+        shouldEqual(psfTof.toEnum(), psf::tof);
         should(psfTof.toString() == "time-of-flight");
 
         // test illegal enum (choose the integer high enough...)
-        ms::PeakShapeFunctionType psfIllegal = static_cast<ms::PeakShapeFunctionTypes>(200);
-        shouldEqual(psfIllegal.toEnum(), static_cast<ms::PeakShapeFunctionTypes>(200));
+        psf::PeakShapeFunctionType psfIllegal = static_cast<psf::PeakShapeFunctionTypes>(200);
+        shouldEqual(psfIllegal.toEnum(), static_cast<psf::PeakShapeFunctionTypes>(200));
         should(psfIllegal.toString() == "unknown");
 
     }
@@ -93,19 +93,19 @@ struct PsfTestSuite : vigra::test_suite {
     // library. So, we don't test it.
     void testGetType() {
         // Testing getType(). We use sound values for the constructors.
-        MSPP_LOG(ms::logINFO) << "Testing the getType() functions.";
-        shouldEqual(ms::GaussianPeakShapeFunction().getType().toEnum(), ms::gaussian);
-        shouldEqual(ms::OrbitrapPeakShapeFunction().getType().toEnum(), ms::orbi);
+        PSF_LOG(psf::logINFO) << "Testing the getType() functions.";
+        shouldEqual(psf::GaussianPeakShapeFunction().getType().toEnum(), psf::gaussian);
+        shouldEqual(psf::OrbitrapPeakShapeFunction().getType().toEnum(), psf::orbi);
     }
 
 
 
     void testOrbitrapPeakShapeFunction() {
-        ms::OrbitrapPeakShapeFunction orbi_psf;
-        shouldEqual(orbi_psf.getType().toEnum(), ms::orbi);
+        psf::OrbitrapPeakShapeFunction orbi_psf;
+        shouldEqual(orbi_psf.getType().toEnum(), psf::orbi);
 
         // construction
-        ms::OrbitrapPeakShapeFunction psf1(0.1214);
+        psf::OrbitrapPeakShapeFunction psf1(0.1214);
         shouldEqual(psf1.getA(), 0.1214);
 
         // operator()
@@ -122,11 +122,11 @@ struct PsfTestSuite : vigra::test_suite {
         shouldEqual(fullMaximum, 2. * halfMaximum);
 
         // auto calibration
-        MSPP_LOG(ms::logINFO) << "Calibrating orbitrap peak shape function.";
-	ms::Spectrum spectrum;
+        PSF_LOG(psf::logINFO) << "Calibrating orbitrap peak shape function.";
+	psf::Spectrum spectrum;
 	loadSpectrumElements(spectrum,dirTestdata + "/PeakShapeFunctions/realistic_ms1.wsv");
-	ms::MzExtractor get_mz;
-	ms::IntensityExtractor get_int;
+	psf::MzExtractor get_mz;
+	psf::IntensityExtractor get_int;
         
         orbi_psf.setA(0); // reset 
         orbi_psf.calibrateFor(get_mz, get_int, spectrum.begin(), spectrum.end());
@@ -134,11 +134,11 @@ struct PsfTestSuite : vigra::test_suite {
     }
 
     void testGaussianPeakShapeFunction() {
-        ms::GaussianPeakShapeFunction gaussian_psf;
-        shouldEqual(gaussian_psf.getType().toEnum(), ms::gaussian);
+        psf::GaussianPeakShapeFunction gaussian_psf;
+        shouldEqual(gaussian_psf.getType().toEnum(), psf::gaussian);
 
         // construction
-        ms::GaussianPeakShapeFunction psf(0.11442);
+        psf::GaussianPeakShapeFunction psf(0.11442);
         shouldEqual(psf.getA(), 0.11442);
 
         // gaussian psf should be independent of the mass channel observed
@@ -155,11 +155,11 @@ struct PsfTestSuite : vigra::test_suite {
         shouldEqual(fullMaximum, 2. * halfMaximum);
 
         // auto calibration
-        MSPP_LOG(ms::logINFO) << "Calibrating gaussian peak shape function.";
-	ms::Spectrum spectrum;
+        PSF_LOG(psf::logINFO) << "Calibrating gaussian peak shape function.";
+	psf::Spectrum spectrum;
 	loadSpectrumElements(spectrum,dirTestdata + "/PeakShapeFunctions/realistic_ms1.wsv");
-	ms::MzExtractor get_mz;
-	ms::IntensityExtractor get_int;
+	psf::MzExtractor get_mz;
+	psf::IntensityExtractor get_int;
         
         gaussian_psf.setA(0); // reset 
         gaussian_psf.calibrateFor(get_mz, get_int, spectrum.begin(), spectrum.end());
@@ -167,9 +167,9 @@ struct PsfTestSuite : vigra::test_suite {
     }
 
     void testOperator() {
-        ms::PeakShapeFunctionTemplate<ms::GaussianPeakShape, ms::TofFwhm, ms::tof> gen;
-        ms::TofFwhm fwhm;
-        ms::GaussianPeakShape ps;
+        psf::PeakShapeFunctionTemplate<psf::GaussianPeakShape, psf::TofFwhm, psf::tof> gen;
+        psf::TofFwhm fwhm;
+        psf::GaussianPeakShape ps;
 
         gen.setA(0.43);
         gen.setB(0.76);
@@ -199,9 +199,9 @@ struct PsfTestSuite : vigra::test_suite {
     }
 
     void testGetSupportThreshold() {
-        ms::PeakShapeFunctionTemplate<ms::GaussianPeakShape, ms::TofFwhm, ms::tof> gen;
-        ms::TofFwhm fwhm;
-        ms::GaussianPeakShape ps;
+        psf::PeakShapeFunctionTemplate<psf::GaussianPeakShape, psf::TofFwhm, psf::tof> gen;
+        psf::TofFwhm fwhm;
+        psf::GaussianPeakShape ps;
 
         gen.setA(0.43);
         gen.setB(0.76);
@@ -215,7 +215,7 @@ struct PsfTestSuite : vigra::test_suite {
     }
 
     void testSet_GetMinimalPeakHeightForCalibration() {
-        ms::PeakShapeFunctionTemplate<ms::GaussianPeakShape, ms::OrbitrapFwhm, ms::orbi> psf;
+        psf::PeakShapeFunctionTemplate<psf::GaussianPeakShape, psf::OrbitrapFwhm, psf::orbi> psf;
        
         psf.setMinimalPeakHeightForCalibration(4.2);
         shouldEqual(psf.getMinimalPeakHeightForCalibration(), 4.2);
@@ -232,15 +232,15 @@ struct PsfTestSuite : vigra::test_suite {
         // Nevertheless, it is still a valid test for its combination of template parameters. Therefore,
         // we 'retired' the test here.
 
-        ms::PeakShapeFunctionTemplate<ms::GaussianPeakShape, ms::OrbitrapFwhm, ms::orbi>  orbi_psf;
-        shouldEqual(orbi_psf.getType().toEnum(), ms::orbi);
+        psf::PeakShapeFunctionTemplate<psf::GaussianPeakShape, psf::OrbitrapFwhm, psf::orbi>  orbi_psf;
+        shouldEqual(orbi_psf.getType().toEnum(), psf::orbi);
 
         // construction
-        ms::PeakShapeFunctionTemplate<ms::GaussianPeakShape, ms::OrbitrapFwhm, ms::orbi> psf1(0.1214);
+        psf::PeakShapeFunctionTemplate<psf::GaussianPeakShape, psf::OrbitrapFwhm, psf::orbi> psf1(0.1214);
         shouldEqual(psf1.getA(), 0.1214);
         shouldEqual(psf1.getB(), orbi_psf.getB());
 
-        ms::PeakShapeFunctionTemplate<ms::GaussianPeakShape, ms::OrbitrapFwhm, ms::orbi> psf2(0.1214, 1.20392);
+        psf::PeakShapeFunctionTemplate<psf::GaussianPeakShape, psf::OrbitrapFwhm, psf::orbi> psf2(0.1214, 1.20392);
         shouldEqual(psf2.getA(), 0.1214);
         shouldEqual(psf2.getB(), 1.20392);
 

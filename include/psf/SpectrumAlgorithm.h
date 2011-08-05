@@ -32,7 +32,7 @@
 #include <ms++/Log.h>
 #include <ms++/Error.h>
 
-namespace ms
+namespace psf
 {
 
 // class LessByExtractor
@@ -44,7 +44,7 @@ namespace ms
  * elements with regard to one of these values.
  */
 template< typename Element, typename Extractor >
-class MSPP_EXPORT LessByExtractor {
+class PSF_EXPORT LessByExtractor {
   public:
   LessByExtractor( const Extractor& e ) : extract_(e) {};
   bool operator()( const Element& lhs, const Element& rhs ) const {
@@ -56,7 +56,7 @@ class MSPP_EXPORT LessByExtractor {
 };
 
 template< typename Element, typename Extractor >
-class MSPP_EXPORT MoreThanValue {
+class PSF_EXPORT MoreThanValue {
    public:
    MoreThanValue( const Extractor& e, typename Extractor::result_type val ) : extract_(e), val_(val) {};
    bool operator()( const Element& e ) const {
@@ -92,7 +92,7 @@ class MSPP_EXPORT MoreThanValue {
  * @date 2009-07-16
  */
 template<typename FwdIter, typename Compare>
-MSPP_EXPORT std::pair<FwdIter, FwdIter> findBump(FwdIter first, FwdIter last, Compare comp);
+PSF_EXPORT std::pair<FwdIter, FwdIter> findBump(FwdIter first, FwdIter last, Compare comp);
 
 
 
@@ -121,15 +121,15 @@ MSPP_EXPORT std::pair<FwdIter, FwdIter> findBump(FwdIter first, FwdIter last, Co
  * @return Pairs of (mz | width at mz) in ascending order of mz. If no pairs found, the
  *         vector is empty.
  *
- * @throw ms::PreconditionViolation Parameter fraction is out of the required range.
+ * @throw psf::PreconditionViolation Parameter fraction is out of the required range.
  *
- * @see ms::findBump
- * @see ms::SpectralPeak::lowness
+ * @see psf::findBump
+ * @see psf::SpectralPeak::lowness
  *
  * @author Bernhard Kausler <bernhard.kausler@iwr.uni-heidelberg.de>
  */
 template<typename FwdIter, typename MzExtractor, typename IntensityExtractor> 
-MSPP_EXPORT
+PSF_EXPORT
 std::vector<std::pair<typename MzExtractor::result_type, typename MzExtractor::result_type> > 
 measureFullWidths(const MzExtractor&, const IntensityExtractor&, FwdIter first, FwdIter last, double fraction, typename IntensityExtractor::result_type minimalPeakHeight = 0);
 
@@ -147,7 +147,7 @@ measureFullWidths(const MzExtractor&, const IntensityExtractor&, FwdIter first, 
  * There are no further requirements to constitute a sequence a spectral peak. For 
  * example, even a set of equiabundant elements can be seen as a spectral peak.
  *
- * @see ms::Peak
+ * @see psf::Peak
  */
 namespace SpectralPeak
 {
@@ -167,12 +167,12 @@ namespace SpectralPeak
      *                    to be considered a peak.
      * @return The peak height, in units of the element abundance.
      *
-     * @throw ms::PreconditionViolation Minimal sequence requirements aren't met.
+     * @throw psf::PreconditionViolation Minimal sequence requirements aren't met.
      *
      * @author Bernhard Kausler <bernhard.kausler@iwr.uni-heidelberg.de>
      */
     template< typename FwdIter, typename IntensityExtractor >
-    MSPP_EXPORT
+    PSF_EXPORT
     typename IntensityExtractor::result_type
     height(const IntensityExtractor&, FwdIter firstElement, FwdIter lastElement);     
 
@@ -201,7 +201,7 @@ namespace SpectralPeak
       * @author Bernhard Kausler <bernhard.kausler@iwr.uni-heidelberg.de>
       */
     template< typename FwdIter, typename IntensityExtractor >
-    MSPP_EXPORT 
+    PSF_EXPORT 
     double lowness(const IntensityExtractor&, FwdIter firstElement, FwdIter lastElement);
 
     // SpectralPeak::fullWidthAtFractionOfMaximum()
@@ -231,13 +231,13 @@ namespace SpectralPeak
       * @param fraction Has to be between 0.0 and 1.0, borders included.
       * @return The full width at the fraction of the maximum, in units of m/z.
       *
-      * @throw ms::PreconditionViolation Parameter fraction not in the required range.
-      * @throw ms::Starvation The sequence doesn't satisfy the minimal requirements.
+      * @throw psf::PreconditionViolation Parameter fraction not in the required range.
+      * @throw psf::Starvation The sequence doesn't satisfy the minimal requirements.
       *
       * @author Bernhard Kausler <bernhard.kausler@iwr.uni-heidelberg.de>
       */
     template< typename FwdIter, typename MzExtractor, typename IntensityExtractor >
-    MSPP_EXPORT
+    PSF_EXPORT
     typename MzExtractor::result_type 
     fullWidthAtFractionOfMaximum(const MzExtractor&, const IntensityExtractor&, FwdIter firstElement, FwdIter lastElement, const double fraction);
 
@@ -375,7 +375,7 @@ measureFullWidths(const MzExtractor& get_mz, const IntensityExtractor& get_int, 
             // we don't have to try for exceptions here, because a bump fulfills the preconditions
 	  width = SpectralPeak::fullWidthAtFractionOfMaximum(get_mz, get_int, bump.first, bump.second, fraction);
             positionOfMaximum = get_mz(*std::max_element(bump.first, bump.second + 1, comp));
-            MSPP_LOG(logDEBUG) << "measureFullWidths(): Measured peak (mz | width): (" << positionOfMaximum << " | " << width << ")";
+            PSF_LOG(logDEBUG) << "measureFullWidths(): Measured peak (mz | width): (" << positionOfMaximum << " | " << width << ")";
             widths.push_back(std::make_pair(positionOfMaximum, width));
         }
         
@@ -406,7 +406,7 @@ SpectralPeak::height(const IntensityExtractor& get_int, FwdIter firstElement, Fw
 
 // lowness()
 template< typename FwdIter, typename IntensityExtractor >
-double ms::SpectralPeak::lowness(const IntensityExtractor& get_int, FwdIter firstElement, FwdIter lastElement) {
+double psf::SpectralPeak::lowness(const IntensityExtractor& get_int, FwdIter firstElement, FwdIter lastElement) {
     // comply to STL standards.
     FwdIter last = lastElement;
     ++last;    
@@ -451,7 +451,7 @@ namespace
  * @return The element below the target abundance nearest (in mz dimension) to the above Element.
  *         Is the above Element exactly on the target, below is the same as the above Element.
  *
- * @throw ms::Starvation No Element below found.
+ * @throw psf::Starvation No Element below found.
  */      
 template <typename const_InIter, typename IntensityExtractor>
 const_InIter findElementBelowTargetAbundance(const IntensityExtractor&, const const_InIter firstElement, const const_InIter above, const typename IntensityExtractor::result_type target);
@@ -467,7 +467,7 @@ const_InIter findElementBelowTargetAbundance(const IntensityExtractor&, const co
  *
  * @return The mz value of the interpolated element with an abundance of 'target'.
  *
- * @throw ms::InvariantViolation Element1 and element2 differ in mz but not in abundance.
+ * @throw psf::InvariantViolation Element1 and element2 differ in mz but not in abundance.
  *                               No interpolation to a general target is then possible.
  */
 template< typename MzExtractor, typename IntensityExtractor, typename element_type>
@@ -487,10 +487,10 @@ fullWidthAtFractionOfMaximum(const MzExtractor& get_mz, const IntensityExtractor
     LessByExtractor<typename IntensityExtractor::element_type, IntensityExtractor> comp(get_int);
     // find maximum intensity
     FwdIter maximum = max_element(firstElement, lastElement + 1, comp);
-    MSPP_LOG(logDEBUG1) << "fullWidthAtFractionOfMaximum(): Spectral peak maximum detected at (mz, intensity): " << get_mz(*maximum) << " ," << get_int(*maximum); 
+    PSF_LOG(logDEBUG1) << "fullWidthAtFractionOfMaximum(): Spectral peak maximum detected at (mz, intensity): " << get_mz(*maximum) << " ," << get_int(*maximum); 
     // calc target intensity
     const typename IntensityExtractor::result_type target = get_int(*maximum) * fraction;
-    MSPP_LOG(logDEBUG1) << "fullWidthAtFractionOfMaximum(): Fraction of maximal intensity is: " << target;
+    PSF_LOG(logDEBUG1) << "fullWidthAtFractionOfMaximum(): Fraction of maximal intensity is: " << target;
     
     // we need that further below for finding elements
     MoreThanValue<typename IntensityExtractor::element_type, IntensityExtractor> compScalar(get_int, target);
@@ -498,10 +498,10 @@ fullWidthAtFractionOfMaximum(const MzExtractor& get_mz, const IntensityExtractor
     /* find utter left element nearest above or on target */
     // target <= above == !(above < target) 
     FwdIter aboveOnLeft = find_if(firstElement, maximum + 1, compScalar);
-    MSPP_LOG(logDEBUG1) << "fullWidthAtFractionOfMaximum(): aboveOnLeft detected at (mz, intensity): " << get_mz(*aboveOnLeft) << " ," << get_int(*aboveOnLeft); 
+    PSF_LOG(logDEBUG1) << "fullWidthAtFractionOfMaximum(): aboveOnLeft detected at (mz, intensity): " << get_mz(*aboveOnLeft) << " ," << get_int(*aboveOnLeft); 
     // determine belowOnLeft
     FwdIter belowOnLeft = findElementBelowTargetAbundance(get_int, firstElement, aboveOnLeft, target);
-    MSPP_LOG(logDEBUG1) << "fullWidthAtFractionOfMaximum(): belowOnLeft detected at (mz, intensity): " << get_mz(*belowOnLeft) << " ," << get_int(*belowOnLeft);
+    PSF_LOG(logDEBUG1) << "fullWidthAtFractionOfMaximum(): belowOnLeft detected at (mz, intensity): " << get_mz(*belowOnLeft) << " ," << get_int(*belowOnLeft);
 
     /* find utter right element */
     // we now start searching from the right
@@ -509,16 +509,16 @@ fullWidthAtFractionOfMaximum(const MzExtractor& get_mz, const IntensityExtractor
     std::reverse_iterator<FwdIter> rmaximum(maximum);
     // target <= above == !(above < target) 
     std::reverse_iterator<FwdIter> aboveOnRight = find_if(rlast, rmaximum, compScalar);
-    MSPP_LOG(logDEBUG1) << "fullWidthAtFractionOfMaximum(): aboveOnRight detected at (mz, intensity): " << get_mz(*aboveOnRight) << " ," << get_int(*aboveOnRight);     
+    PSF_LOG(logDEBUG1) << "fullWidthAtFractionOfMaximum(): aboveOnRight detected at (mz, intensity): " << get_mz(*aboveOnRight) << " ," << get_int(*aboveOnRight);     
     // determine belowOnRight
     std::reverse_iterator<FwdIter> belowOnRight = findElementBelowTargetAbundance(get_int, rlast, aboveOnRight, target);
-    MSPP_LOG(logDEBUG1) << "fullWidthAtFractionOfMaximum(): belowOnRight detected at (mz, intensity): " << get_mz(*belowOnRight) << " ," << get_int(*belowOnRight); 
+    PSF_LOG(logDEBUG1) << "fullWidthAtFractionOfMaximum(): belowOnRight detected at (mz, intensity): " << get_mz(*belowOnRight) << " ," << get_int(*belowOnRight); 
     
     /* interpolate below and above elements */
     typename MzExtractor::result_type leftInterpolated = interpolateElements(get_mz, get_int, *belowOnLeft, *aboveOnLeft, target);
-    MSPP_LOG(logDEBUG1) << "fullWidthAtFractionOfMaximum(): leftInterpolated is: " << leftInterpolated;
+    PSF_LOG(logDEBUG1) << "fullWidthAtFractionOfMaximum(): leftInterpolated is: " << leftInterpolated;
     typename MzExtractor::result_type rightInterpolated = interpolateElements(get_mz, get_int, *belowOnRight, *aboveOnRight, target);
-    MSPP_LOG(logDEBUG1) << "fullWidthAtFractionOfMaximum(): rightInterpolated is: " << rightInterpolated;
+    PSF_LOG(logDEBUG1) << "fullWidthAtFractionOfMaximum(): rightInterpolated is: " << rightInterpolated;
 
     return rightInterpolated - leftInterpolated;
 }
@@ -541,7 +541,7 @@ namespace
             // special case: target == above
             else {
                 below = above;
-                MSPP_LOG(logDEBUG2) << "findElementBelowTargetAbundance(): Target abundance equals abundance of element above. Setting below element equal to above element.";
+                PSF_LOG(logDEBUG2) << "findElementBelowTargetAbundance(): Target abundance equals abundance of element above. Setting below element equal to above element.";
             }        
         } else {
             // Choose nearest neighbor in mz dimension (guaranteed to be below target abundance by our imposed preconditions).
@@ -561,11 +561,11 @@ namespace
 
             // abundance = slope * mz + shift      
             double slope = 1.0 * (get_int(element2) - get_int(element1)) / (get_mz(element2) - get_mz(element1));
-            MSPP_LOG(logDEBUG2) << "interpolateElements(): slope of linear interpolation: " << slope;              
+            PSF_LOG(logDEBUG2) << "interpolateElements(): slope of linear interpolation: " << slope;              
 
             // just take one of the two Elements to determine the shift
             double shift = get_int(element1) - slope * get_mz(element1);
-            MSPP_LOG(logDEBUG2) << "interpolateElements(): shift of linear interpolation: " << shift; 
+            PSF_LOG(logDEBUG2) << "interpolateElements(): shift of linear interpolation: " << shift; 
 
             // => mz = (abundance - shift)/slope
             return static_cast<typename MzExtractor::result_type>( (target - shift) / slope );
@@ -573,6 +573,6 @@ namespace
     }
 } /* anonymous namespace */
 
-} /* namespace ms */
+} /* namespace psf */
 
 #endif /*__SPECTRUMALGORITHM_H__*/

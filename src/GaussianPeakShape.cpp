@@ -27,7 +27,7 @@
 #include <ms++/Error.h>
 #include <psf/PeakShape.h>
 
-using namespace ms;
+using namespace psf;
 
 double GaussianPeakShape::at(const double xCoordinate) const {
     return std::exp(-(xCoordinate * xCoordinate) / (2 * sigma_ * sigma_));

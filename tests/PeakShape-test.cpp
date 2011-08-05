@@ -42,28 +42,28 @@ struct peakshapeTestSuite : vigra::test_suite {
 
     void testGaussianPeakShapeConstruction() {
         // default constructor
-        ms::GaussianPeakShape gps;
+        psf::GaussianPeakShape gps;
         shouldEqual(gps.getSigma(), 0.1);
 
         // constructor init sigma
-        ms::GaussianPeakShape gps_sigma(0.79);
+        psf::GaussianPeakShape gps_sigma(0.79);
         shouldEqual(gps_sigma.getSigma(), 0.79);
 
         // illegal sigma
         bool thrown = false;
         try {
-            ms::GaussianPeakShape(0);
-        } catch (const ms::PreconditionViolation& e){
-			MSPP_UNUSED(e);
+            psf::GaussianPeakShape(0);
+        } catch (const psf::PreconditionViolation& e){
+			PSF_UNUSED(e);
             thrown = true;
         }
         should(thrown);
         thrown = false;
 
         try {
-            ms::GaussianPeakShape(-0.34);
-        } catch (const ms::PreconditionViolation& e){
-			MSPP_UNUSED(e);
+            psf::GaussianPeakShape(-0.34);
+        } catch (const psf::PreconditionViolation& e){
+			PSF_UNUSED(e);
             thrown = true;
         }
         should(thrown);
@@ -71,7 +71,7 @@ struct peakshapeTestSuite : vigra::test_suite {
     }
 
     void testGaussianPeakShapeGetterSetter() {
-        ms::GaussianPeakShape gps;
+        psf::GaussianPeakShape gps;
         bool thrown = false;
 
         // sigma
@@ -83,8 +83,8 @@ struct peakshapeTestSuite : vigra::test_suite {
 
         try {
             gps.setSigma(0.);
-        } catch (const ms::PreconditionViolation& e){
-			MSPP_UNUSED(e);
+        } catch (const psf::PreconditionViolation& e){
+			PSF_UNUSED(e);
             thrown = true;
         }
         should(thrown);
@@ -92,8 +92,8 @@ struct peakshapeTestSuite : vigra::test_suite {
 
         try {
             gps.setSigma(-1.7);
-        } catch (const ms::PreconditionViolation& e){
-			MSPP_UNUSED(e);
+        } catch (const psf::PreconditionViolation& e){
+			PSF_UNUSED(e);
             thrown = true;
         }
         should(thrown);
@@ -108,8 +108,8 @@ struct peakshapeTestSuite : vigra::test_suite {
 
         try {
             gps.setFwhm(0.);
-        } catch (const ms::PreconditionViolation& e){
-			MSPP_UNUSED(e);
+        } catch (const psf::PreconditionViolation& e){
+			PSF_UNUSED(e);
             thrown = true;
         }
         should(thrown);
@@ -117,8 +117,8 @@ struct peakshapeTestSuite : vigra::test_suite {
 
         try {
             gps.setFwhm(-1.7);
-        } catch (const ms::PreconditionViolation& e){
-			MSPP_UNUSED(e);
+        } catch (const psf::PreconditionViolation& e){
+			PSF_UNUSED(e);
             thrown = true;
         }
         should(thrown);
@@ -133,8 +133,8 @@ struct peakshapeTestSuite : vigra::test_suite {
 
         try {
             gps.setSigmaFactorForSupportThreshold(0.);
-        } catch (const ms::PreconditionViolation& e){
-			MSPP_UNUSED(e);
+        } catch (const psf::PreconditionViolation& e){
+			PSF_UNUSED(e);
             thrown = true;
         }
         should(thrown);
@@ -142,8 +142,8 @@ struct peakshapeTestSuite : vigra::test_suite {
 
         try {
             gps.setSigmaFactorForSupportThreshold(-1.7);
-        } catch (const ms::PreconditionViolation& e){
-			MSPP_UNUSED(e);
+        } catch (const psf::PreconditionViolation& e){
+			PSF_UNUSED(e);
             thrown = true;
         }
         should(thrown);
@@ -151,7 +151,7 @@ struct peakshapeTestSuite : vigra::test_suite {
     }
 
     void testGaussianPeakShapeSigmaFwhmConversion() {
-        ms::GaussianPeakShape gps;
+        psf::GaussianPeakShape gps;
 
         // conversion factor
         double conversionFactor = gps.sigmaToFwhmConversionFactor();
@@ -172,7 +172,7 @@ struct peakshapeTestSuite : vigra::test_suite {
             }
         };
 
-        ms::GaussianPeakShape gps;
+        psf::GaussianPeakShape gps;
 
         // has to be 1 at xCoordinate=0 
         shouldEqual(gps.at(0), 1);
@@ -192,7 +192,7 @@ struct peakshapeTestSuite : vigra::test_suite {
     }
 
     void testGaussianPeakShapeGetSupportThreshold() {
-        ms::GaussianPeakShape gps;
+        psf::GaussianPeakShape gps;
 
         shouldEqual(gps.getSigmaFactorForSupportThreshold(), 3.0);
 

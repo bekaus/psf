@@ -36,7 +36,7 @@
 
 #include "unittest.hxx"
 
-using namespace ms;
+using namespace psf;
 
 namespace std {
 ostream& operator<<(ostream& os, const pair<int*, int*>& p) {
@@ -97,18 +97,18 @@ struct SpectrumAlgorithmTestSuite : vigra::test_suite {
     std::pair<int*, int*> returned;
 
     // find both bumps
-    returned = ms::findBump(twoBumps, twoBumps+23, std::less<int>());   
+    returned = psf::findBump(twoBumps, twoBumps+23, std::less<int>());   
     shouldEqual(returned, firstBump);
-    returned = ms::findBump(returned.second, twoBumps+23, std::less<int>());
+    returned = psf::findBump(returned.second, twoBumps+23, std::less<int>());
     shouldEqual(returned, secondBump);
 
     // no bump is in this sequence
-    returned = ms::findBump(noBumps, noBumps + 9, std::less<int>());
+    returned = psf::findBump(noBumps, noBumps + 9, std::less<int>());
     shouldEqual(returned, noBumps_noneFound);
     }
 
     void testMeasureFullWidths() {
-        using namespace ms;
+        using namespace psf;
         using namespace std;
 	MzExtractor get_mz;
 	IntensityExtractor get_int;
@@ -150,7 +150,7 @@ struct SpectrumAlgorithmTestSuite : vigra::test_suite {
                       > MzWidthPair;
         MzWidthPair result;
     
-        MSPP_LOG(logINFO) << "Testing fraction of 0.7 .";
+        PSF_LOG(logINFO) << "Testing fraction of 0.7 .";
         result = measureFullWidths(get_mz, get_int, s1.begin(), s1.end(), 0.7);
         shouldEqual(result.size(), (MzWidthPair::size_type)3);
         should(result.at(0).first == 4);
@@ -160,7 +160,7 @@ struct SpectrumAlgorithmTestSuite : vigra::test_suite {
         should(result.at(2).first == 14);
         shouldEqualTolerance(result.at(2).second, 2., 0.1);
 
-        MSPP_LOG(logINFO) << "Testing fraction of 0.51 .";
+        PSF_LOG(logINFO) << "Testing fraction of 0.51 .";
         result = measureFullWidths(get_mz, get_int, s1.begin(), s1.end(), 0.51);
         shouldEqual(result.size(), (MzWidthPair::size_type)2);
         should(result.at(0).first == 9);
@@ -168,13 +168,13 @@ struct SpectrumAlgorithmTestSuite : vigra::test_suite {
         should(result.at(1).first == 14);
         shouldEqualTolerance(result.at(1).second, 2., 0.1);
 
-        MSPP_LOG(logINFO) << "Testing fraction of 0.11 .";
+        PSF_LOG(logINFO) << "Testing fraction of 0.11 .";
         result = measureFullWidths(get_mz, get_int, s1.begin(), s1.end(), 0.11);
         shouldEqual(result.size(), (MzWidthPair::size_type)1);
         shouldEqual(result.at(0).first, 14);
         shouldEqualTolerance(result.at(0).second, 4., 0.1);
 
-        MSPP_LOG(logINFO) << "Testing fraction of 0.001 .";
+        PSF_LOG(logINFO) << "Testing fraction of 0.001 .";
         result = measureFullWidths(get_mz, get_int, s1.begin(), s1.end(), 0.001);
         should(result.empty());
 
@@ -185,7 +185,7 @@ struct SpectrumAlgorithmTestSuite : vigra::test_suite {
         shouldEqual(result.size(), (MzWidthPair::size_type)0);
 
         // test spectrum with no pure peaks
-        MSPP_LOG(logINFO) << "Testing spectrum with no pure peaks.";
+        PSF_LOG(logINFO) << "Testing spectrum with no pure peaks.";
         Spectrum s_unpure;
         s_unpure.push_back(SpectrumElement(1, 9));
         s_unpure.push_back(SpectrumElement(2, 8));
@@ -195,7 +195,7 @@ struct SpectrumAlgorithmTestSuite : vigra::test_suite {
         should(result.empty());
 
         // test spectrum with duplicate mz values
-        MSPP_LOG(logINFO) << "Testing spectrum with duplicate mz values.";
+        PSF_LOG(logINFO) << "Testing spectrum with duplicate mz values.";
         Spectrum s_duplicate;
         s_duplicate.push_back(SpectrumElement(1, 9));
         s_duplicate.push_back(SpectrumElement(1, 9));
@@ -224,7 +224,7 @@ struct SpectrumAlgorithmTestSuite : vigra::test_suite {
         shouldEqualTolerance(result.at(0).second, 4., 0.1);
         
         // test empty spectrum
-        MSPP_LOG(logINFO) << "Testing with empty spectrum.";
+        PSF_LOG(logINFO) << "Testing with empty spectrum.";
         Spectrum s_empty;
         result = measureFullWidths(get_mz, get_int, s_empty.begin(), s_empty.end(), 0.5);
         should(result.empty());
@@ -235,7 +235,7 @@ struct SpectrumAlgorithmTestSuite : vigra::test_suite {
             measureFullWidths(get_mz, get_int, s1.begin(), s1.end(), 0.);
         }
         catch(const PreconditionViolation& e) {
-			MSPP_UNUSED(e);
+			PSF_UNUSED(e);
             thrown = true;
         }
         should(!thrown);
@@ -245,7 +245,7 @@ struct SpectrumAlgorithmTestSuite : vigra::test_suite {
             measureFullWidths(get_mz, get_int, s1.begin(), s1.end(), 1.);
         }
         catch(const PreconditionViolation& e) {
-			MSPP_UNUSED(e);
+			PSF_UNUSED(e);
             thrown = true;
         }
         should(!thrown);
@@ -255,7 +255,7 @@ struct SpectrumAlgorithmTestSuite : vigra::test_suite {
             measureFullWidths(get_mz, get_int, s1.begin(), s1.end(), -0.3);
         }
         catch(const PreconditionViolation& e) {
-			MSPP_UNUSED(e);
+			PSF_UNUSED(e);
             thrown = true;
         }
         should(thrown);
@@ -265,13 +265,13 @@ struct SpectrumAlgorithmTestSuite : vigra::test_suite {
             measureFullWidths(get_mz, get_int, s1.begin(), s1.end(), 1.3);
         }
         catch(const PreconditionViolation& e) {
-			MSPP_UNUSED(e);
+			PSF_UNUSED(e);
             thrown = true;
         }
         should(thrown);
         thrown = false;
 
-        MSPP_LOG(logINFO) << "Testing with realistic spectrum.";
+        PSF_LOG(logINFO) << "Testing with realistic spectrum.";
 	Spectrum spectrum;
 	loadSpectrumElements(spectrum, dirTestdata + "/SpectrumAlgorithm/realistic_ms1.wsv");
         result = measureFullWidths(get_mz, get_int, spectrum.begin(), spectrum.end(), 0.5);
@@ -336,7 +336,7 @@ struct SpectralPeakTestSuite : vigra::test_suite {
             SpectralPeak::height(get_int, s2.begin(), --(s2.end()));
         }
         catch(const PreconditionViolation& e) {
-			MSPP_UNUSED(e);
+			PSF_UNUSED(e);
             thrown = true;
         }
         should(thrown);
@@ -433,7 +433,7 @@ struct SpectralPeakTestSuite : vigra::test_suite {
             SpectralPeak::fullWidthAtFractionOfMaximum(get_mz, get_int, s1.begin(), --(s1.end()), 0.3);
         }
         catch(const Starvation& e) {
-			MSPP_UNUSED(e);
+			PSF_UNUSED(e);
             thrown = true;        
         }
         shouldMsg(thrown, "Starvation wasn't thrown despite of invalid input data.");
@@ -444,7 +444,7 @@ struct SpectralPeakTestSuite : vigra::test_suite {
             SpectralPeak::fullWidthAtFractionOfMaximum(get_mz, get_int, s1.begin(), --(s1.end()), 1.1);
         }
         catch(const PreconditionViolation& e) {
-			MSPP_UNUSED(e);
+			PSF_UNUSED(e);
             thrown = true;        
         }
         shouldMsg(thrown, "PreconditionViolation wasn't thrown despite of invalid fraction parameter.");
@@ -454,7 +454,7 @@ struct SpectralPeakTestSuite : vigra::test_suite {
             SpectralPeak::fullWidthAtFractionOfMaximum(get_mz, get_int, s1.begin(), --(s1.end()), -0.3);
         }
         catch(const PreconditionViolation& e) {
-			MSPP_UNUSED(e);
+			PSF_UNUSED(e);
             thrown = true;        
         }
         shouldMsg(thrown, "PreconditionViolation wasn't thrown despite of invalid fraction parameter.");
@@ -467,7 +467,7 @@ struct SpectralPeakTestSuite : vigra::test_suite {
             SpectralPeak::fullWidthAtFractionOfMaximum(get_mz, get_int, s1.begin(), --(s1.end()), 0.0);
         }
         catch(const Starvation& e) {
-            MSPP_UNUSED(e);
+            PSF_UNUSED(e);
         }
 
         // Special peak with elements exactly on target abundance

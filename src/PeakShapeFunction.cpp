@@ -27,7 +27,7 @@
 
 #include "psf/PeakShapeFunction.h"
 
-using namespace ms;
+using namespace psf;
 
 PeakShapeFunctionTypes PeakShapeFunctionType::toEnum() {
     return type_;

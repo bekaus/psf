@@ -31,7 +31,7 @@
 /**
  * Typedef to keep the ms++ interface clean of VIGRA code
  */
-namespace ms
+namespace psf
 {
 typedef vigra::linalg::Matrix<double> ModelMatrix;
 }

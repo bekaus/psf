@@ -30,7 +30,7 @@
 // for friend declaration further below
 struct peakshapeTestSuite;
 
-namespace ms
+namespace psf
 {
 
 // class PeakShape
@@ -56,7 +56,7 @@ namespace ms
  *
  * We assume no special normalization of the peak shape's area. This can speed up calculations.
  *
- * @see ms::GaussianPeakShape
+ * @see psf::GaussianPeakShape
  * 
  * @author Bernhard Kausler <bernhard.kausler@iwr.uni-heidelberg.de>
  * @date 2009-07-09
@@ -113,13 +113,13 @@ public:
  * and that is why we rely on the Gaussian that would be used
  * for profile data. 
  *
- * @see ms::PeakShape
+ * @see psf::PeakShape
  * 
  * @author Bernhard Kausler <bernhard.kausler@iwr.uni-heidelberg.de>
  * @author Marc Kirchner <marc.kirchner@childrens.harvard.edu>
  * @date 2009-10-02
  */
-class MSPP_EXPORT BoxPeakShape
+class PSF_EXPORT BoxPeakShape
 {
 public:
     double at(const double xCoordinate) const;
@@ -139,7 +139,7 @@ public:
      * Sets the sigma parameter of the underlying Gaussian.
      *
      * @param sigma Has to be positive.
-     * @throw ms::PreconditionViolation Sigma is not positive.
+     * @throw psf::PreconditionViolation Sigma is not positive.
      */
     void setSigma(const double sigma);
 
@@ -156,7 +156,7 @@ public:
      * This changes the sigma parameter according to @f$ \mathrm{FWHM}=2\sqrt{2\ln2}\cdot\sigma @f$.
      *
      * @param fwhm Has to be positive.
-     * @throw ms::PreconditionViolation fwhm is not positive.
+     * @throw psf::PreconditionViolation fwhm is not positive.
      */
     void setFwhm(const double fwhm);
     
@@ -171,7 +171,7 @@ public:
      * Sets the factor for the threshold calculation.
      *
      * @param factor Has to be positive.
-     * @throw ms::PreconditionViolation factor is not positive.
+     * @throw psf::PreconditionViolation factor is not positive.
      */
     void setSigmaFactorForSupportThreshold(const double factor);
 
@@ -203,12 +203,12 @@ friend struct ::peakshapeTestSuite;
  *
  * The gaussian is centered around zero.
  *
- * @see ms::PeakShape
+ * @see psf::PeakShape
  * 
  * @author Bernhard Kausler <bernhard.kausler@iwr.uni-heidelberg.de>
  * @date 2009-07-09
  */
-class MSPP_EXPORT GaussianPeakShape
+class PSF_EXPORT GaussianPeakShape
 {
 public:
     double at(const double xCoordinate) const;
@@ -228,7 +228,7 @@ public:
      * Sets the sigma parameter of the gaussian.
      *
      * @param sigma Has to be positive.
-     * @throw ms::PreconditionViolation Sigma is not positive.
+     * @throw psf::PreconditionViolation Sigma is not positive.
      */
     void setSigma(const double sigma);
 
@@ -245,7 +245,7 @@ public:
      * This changes the sigma parameter according to @f$ \mathrm{FWHM}=2\sqrt{2\ln2}\cdot\sigma @f$.
      *
      * @param fwhm Has to be positive.
-     * @throw ms::PreconditionViolation fwhm is not positive.
+     * @throw psf::PreconditionViolation fwhm is not positive.
      */
     void setFwhm(const double fwhm);
     
@@ -260,7 +260,7 @@ public:
      * Sets the factor for the threshold calculation.
      *
      * @param factor Has to be positive.
-     * @throw ms::PreconditionViolation factor is not positive.
+     * @throw psf::PreconditionViolation factor is not positive.
      */
     void setSigmaFactorForSupportThreshold(const double factor);
 
@@ -294,11 +294,11 @@ friend struct ::peakshapeTestSuite;
  *
  * The Lorentzian is centered around zero.
  *
- * @see ms::PeakShape
+ * @see psf::PeakShape
  * 
  * @author Bernhard Kausler <bernhard.kausler@iwr.uni-heidelberg.de>
  */
-class MSPP_EXPORT LorentzianPeakShape
+class PSF_EXPORT LorentzianPeakShape
 {
 public:
     double at(const double xCoordinate) const;
@@ -318,7 +318,7 @@ public:
      * Sets the full width at half maximum.
      *
      * @param fwhm Has to be positive.
-     * @throw ms::PreconditionViolation fwhm is not positive.
+     * @throw psf::PreconditionViolation fwhm is not positive.
      */
     void setFwhm(double fwhm);
     
@@ -333,7 +333,7 @@ public:
      * Sets the factor for the threshold calculation.
      *
      * @param factor Has to be positive.
-     * @throw ms::PreconditionViolation factor is not positive.
+     * @throw psf::PreconditionViolation factor is not positive.
      */
     void setFwhmFactorForSupportThreshold(const double factor);
 
@@ -350,7 +350,7 @@ private:
 friend struct ::peakshapeTestSuite;
 };
 
-} /* namespace ms */
+} /* namespace psf */
 
 #endif /*__PEAKSHAPE_H__*/
 

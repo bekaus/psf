@@ -28,14 +28,14 @@
 
 #include "psf/PeakParameter.h"
 
-using namespace ms;
+using namespace psf;
 
 unsigned int SqrtModel::numberOfParameters() {
     return numberOfParameters_;
 }
 
 void SqrtModel::setParameter(unsigned index, double value) {
-    mspp_precondition(index < numberOfParameters(), "SqrtModel::setParameter(): Parameter index out-of-range.");
+    psf_precondition(index < numberOfParameters(), "SqrtModel::setParameter(): Parameter index out-of-range.");
     if(index == 0) {    
         a_ = value;
     }
@@ -44,7 +44,7 @@ void SqrtModel::setParameter(unsigned index, double value) {
     }
 }
 double SqrtModel::getParameter(unsigned index) {
-    mspp_precondition(index < numberOfParameters(), "SqrtModel::getParameter(): Parameter index out-of-range.");
+    psf_precondition(index < numberOfParameters(), "SqrtModel::getParameter(): Parameter index out-of-range.");
     if(index == 0) {    
         return a_;
     }
@@ -54,7 +54,7 @@ double SqrtModel::getParameter(unsigned index) {
 }
 
 double SqrtModel::at(const double x) const {
-    mspp_precondition(x >= 0, "SqrtModel::at(): Parameter x hast to be >= 0.");
+    psf_precondition(x >= 0, "SqrtModel::at(): Parameter x hast to be >= 0.");
     return a_ * std::sqrt(x) + b_;
 }
 

@@ -28,7 +28,7 @@
 #include <ms++/Error.h>
 #include "psf/PeakShape.h"
 
-using namespace ms;
+using namespace psf;
 
 double BoxPeakShape::at(const double xCoordinate) const {
     // this is the only difference between the Box and tha Gaussian

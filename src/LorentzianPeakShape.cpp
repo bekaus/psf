@@ -27,7 +27,7 @@
 #include <ms++/Error.h>
 #include "psf/PeakShape.h"
 
-using namespace ms;
+using namespace psf;
 
 double LorentzianPeakShape::at(const double xCoordinate) const {
     return fwhm_ / ((xCoordinate * xCoordinate) + (fwhm_*fwhm_));

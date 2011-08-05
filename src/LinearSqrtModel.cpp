@@ -28,7 +28,7 @@
 
 #include "psf/PeakParameter.h"
 
-namespace ms
+namespace psf
 {
 
 unsigned int LinearSqrtModel::numberOfParameters() {
@@ -113,4 +113,4 @@ double LinearSqrtOriginModel::getA() const {
     return a_;
 }
 
-} /* namespace ms */
+} /* namespace psf */

@@ -55,7 +55,7 @@
  */
 
 
-namespace ms
+namespace psf
 {
 
 
@@ -118,6 +118,6 @@ void loadSpectrumElements(Spectrum& s, const std::string& filename){
 }
 
 
-} /* namespace ms */
+} /* namespace psf */
 
 #endif /*__SPECTRUM_H__*/

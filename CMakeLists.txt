@@ -15,26 +15,26 @@
     # 
     MACRO(LOGGING_LEVEL_TO_DEFINE LOGGING_LEVEL DEFINE)
         IF(${LOGGING_LEVEL} STREQUAL "NO_LOGGING")
-            SET(${DEFINE} "ms::logNO_LOGGING")
+            SET(${DEFINE} "psf::logNO_LOGGING")
         ELSEIF(${LOGGING_LEVEL} STREQUAL "ERROR")
-            SET(${DEFINE} "ms::logERROR")
+            SET(${DEFINE} "psf::logERROR")
         ELSEIF(${LOGGING_LEVEL} STREQUAL "WARNING")
-            SET(${DEFINE} "ms::logWARNING")
+            SET(${DEFINE} "psf::logWARNING")
         ELSEIF(${LOGGING_LEVEL} STREQUAL "INFO")
-            SET(${DEFINE} "ms::logINFO")
+            SET(${DEFINE} "psf::logINFO")
         ELSEIF(${LOGGING_LEVEL} STREQUAL "DEBUG")
-            SET(${DEFINE} "ms::logDEBUG")
+            SET(${DEFINE} "psf::logDEBUG")
         ELSEIF(${LOGGING_LEVEL} STREQUAL "DEBUG1")
-            SET(${DEFINE} "ms::logDEBUG1")
+            SET(${DEFINE} "psf::logDEBUG1")
         ELSEIF(${LOGGING_LEVEL} STREQUAL "DEBUG2")
-            SET(${DEFINE} "ms::logDEBUG2")
+            SET(${DEFINE} "psf::logDEBUG2")
         ELSEIF(${LOGGING_LEVEL} STREQUAL "DEBUG3")
-            SET(${DEFINE} "ms::logDEBUG3")
+            SET(${DEFINE} "psf::logDEBUG3")
         ELSEIF(${LOGGING_LEVEL} STREQUAL "DEBUG4")
-            SET(${DEFINE} "ms::logDEBUG4")
+            SET(${DEFINE} "psf::logDEBUG4")
         ELSE(${LOGGING_LEVEL} STREQUAL "NO_LOGGING")
             MESSAGE(SEND_ERROR "Unknown LOGGING_LEVEL: ${LOGGING_LEVEL}. Default to INFO.")
-            SET(${DEFINE} "ms::logINFO")
+            SET(${DEFINE} "psf::logINFO")
         ENDIF(${LOGGING_LEVEL} STREQUAL "NO_LOGGING")
     ENDMACRO(LOGGING_LEVEL_TO_DEFINE)
 
@@ -67,7 +67,7 @@
 
     CONFIGURE_FILE(
         ${CMAKE_CURRENT_SOURCE_DIR}/cmake/config.h.cmake 
-        ${PSF_BINARY_DIR}/include/ms++/config.h
+        ${PSF_BINARY_DIR}/include/psf/config.h
     )
 
 
@@ -82,7 +82,7 @@
     SET(VIGRA_INCLUDE "/usr/include/" CACHE STRING "Path to vigra include dir.") 
 
     # build static or shared libraries
-    OPTION(BUILD_SHARED_LIBS "Build ms++ and helper libraries in shared mode (else static)." ON)
+    OPTION(BUILD_SHARED_LIBS "Build psf and helper libraries in shared mode (else static)." ON)
 
 ### check host system type
 # check for 64 bit OS
@@ -100,7 +100,7 @@
 # cflags and compiler switches
 ##
     IF(CMAKE_BUILD_TYPE STREQUAL "Debug")
-        ADD_DEFINITIONS(-DMSPPDEBUG)
+        ADD_DEFINITIONS(-DPSFDEBUG)
     ENDIF(CMAKE_BUILD_TYPE STREQUAL "Debug")
     
     IF(MSVC)

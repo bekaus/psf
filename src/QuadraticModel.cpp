@@ -26,7 +26,7 @@
 
 #include <psf/PeakParameter.h>
 
-using namespace ms;
+using namespace psf;
 
 unsigned int QuadraticModel::numberOfParameters() {
     return numberOfParameters_;

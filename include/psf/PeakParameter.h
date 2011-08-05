@@ -5,20 +5,20 @@
  *
  * Copyright (c) 2009 Bernhard Kausler <bernhard.kausler@iwr.uni-heidelberg.de>
  *
- * This file is part of ms++.
+ * This file is part of psf++.
  *
- * ms++ is free software: you can redistribute it and/or modify
+ * psf++ is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * ms++ is distributed in the hope that it will be useful,
+ * psf++ is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General Public License
- * along with ms++. If not, see <http://www.gnu.org/licenses/>.
+ * along with psf++. If not, see <http://www.gnu.org/licenses/>.
  *
  */
 
@@ -28,15 +28,15 @@
 #include <utility>
 #include <vector>
 
-#include <ms++/Error.h>
-#include <ms++/Log.h>
+#include <psf/Error.h>
+#include <psf/Log.h>
 #include <psf/SpectrumAlgorithm.h>
 
 #include <vigra/windows.h>
 #include <vigra/matrix.hxx>
 #include <vigra/regression.hxx>
 
-namespace ms
+namespace psf
 {
 /**
  * The slope (including the bias) of a multidimensional linear function.
@@ -53,11 +53,11 @@ typedef std::vector<double> GeneralizedSlope;
  *
  * ConstantModel is a policy class. The model depends on one parameter a.
  * @see http://en.wikipedia.org/wiki/Policy_based_design
- * @see ms::PeakParameterModel
+ * @see psf::PeakParameterModel
  *
  * @author Bernhard Kausler <bernhard.kausler@iwr.uni-heidelberg.de>
  */
-class MSPP_EXPORT ConstantModel
+class PSF_EXPORT ConstantModel
 {
 public:
     /**
@@ -109,11 +109,11 @@ private:
  *
  * LinearSqrtModel is a policy class. The model depends on two parameter a and b.
  * @see http://en.wikipedia.org/wiki/Policy_based_design
- * @see ms::PeakParameterModel
+ * @see psf::PeakParameterModel
  *
  * @author Bernhard Kausler <bernhard.kausler@iwr.uni-heidelberg.de>
  */
-class MSPP_EXPORT LinearSqrtModel
+class PSF_EXPORT LinearSqrtModel
 {
 public:
     /**
@@ -168,11 +168,11 @@ private:
  *
  * LinearSqrtOriginModel is a policy class. The model depends on one parameter a.
  * @see http://en.wikipedia.org/wiki/Policy_based_design
- * @see ms::PeakParameterModel
+ * @see psf::PeakParameterModel
  *
  * @author Bernhard Kausler <bernhard.kausler@iwr.uni-heidelberg.de>
  */
-class MSPP_EXPORT LinearSqrtOriginModel
+class PSF_EXPORT LinearSqrtOriginModel
 {
 public:
     /**
@@ -224,11 +224,11 @@ private:
  *
  * SqrtModel is a policy class. The model depends on two parameter a and b.
  * @see http://en.wikipedia.org/wiki/Policy_based_design
- * @see ms::PeakParameterModel
+ * @see psf::PeakParameterModel
  *
  * @author Bernhard Kausler <bernhard.kausler@iwr.uni-heidelberg.de>
  */
-class MSPP_EXPORT SqrtModel
+class PSF_EXPORT SqrtModel
 {
 public:
     /**
@@ -283,11 +283,11 @@ private:
  *
  * QuadraticModel is a policy class. The model depends on two parameter a and b.
  * @see http://en.wikipedia.org/wiki/Policy_based_design
- * @see ms::PeakParameterModel
+ * @see psf::PeakParameterModel
  *
  * @author Bernhard Kausler <bernhard.kausler@iwr.uni-heidelberg.de>
  */
-class MSPP_EXPORT QuadraticModel
+class PSF_EXPORT QuadraticModel
 {
 public:
     /**
@@ -339,11 +339,11 @@ private:
 
 // class ParameterModel
 /**
- * The interface for the peak parameter policy to be used in ms::PeakParameterFwhm.
+ * The interface for the peak parameter policy to be used in psf::PeakParameterFwhm.
  *
  * @attention This interface exists only for the purpose of documentation. Don't inherit
  *      from it, but simply implement it.
- * @see ms::PeakParameterFwhm
+ * @see psf::PeakParameterFwhm
  *
  * @author Bernhard Kausler <bernhard.kausler@iwr.uni-heidelberg.de>
  */
@@ -385,7 +385,7 @@ public:
       * 
       * @attention: Don't implement, if the model has no parameters. This will cause
       * desirable compile time errors, if one tries to learn a model without parameters.
-      * @throw ms::PreconditionViolation Parameter index is out of range or the number of
+      * @throw psf::PreconditionViolation Parameter index is out of range or the number of
       *                                  parameters is zero.
       */
      virtual void setParameter(unsigned index, double value) = 0;
@@ -394,7 +394,7 @@ public:
       * 
       * @attention: Don't implement, if the model has no parameters. This will cause
       * desirable compile time errors, if one tries to learn a model without parameters.
-      * @throw ms::PreconditionViolation Parameter index is out of range or the number of
+      * @throw psf::PreconditionViolation Parameter index is out of range or the number of
       *                                  parameters is zero.
       */
      virtual double getParameter(unsigned index);
@@ -416,7 +416,7 @@ protected:
      * @attention This function is part of the optional interface, since not every model may have
      * a linear representation in parameter space.
      *
-     * @see ms::PeakParameterModel::GeneralizedSlope
+     * @see psf::PeakParameterModel::GeneralizedSlope
      * 
      * @param x The coordinate x now playing the role of a parameter.
      * @return The generalized slope, a mulitdimensional vector including the bias.
@@ -439,18 +439,18 @@ protected:
  * parameters and mz values (There is no such thing as a negative FWHM). Else, you will
  * probably get very unexpected behaviour. 
  *
- * @see ms::ConstantModel, 
- *      ms::LinearSqrtModel,
-        ms::LinearSqrtOriginModel
- *      ms::SqrtModel,
- *      ms::QuadraticModel
- * @see ms::PeakShape
- * @see ms::GaussianPeakShape
+ * @see psf::ConstantModel, 
+ *      psf::LinearSqrtModel,
+        psf::LinearSqrtOriginModel
+ *      psf::SqrtModel,
+ *      psf::QuadraticModel
+ * @see psf::PeakShape
+ * @see psf::GaussianPeakShape
  *
  * @author Bernhard Kausler <bernhard.kausler@iwr.uni-heidelberg.de>
  */
 template <typename ParameterModel>
-class MSPP_EXPORT PeakParameterFwhm : public ParameterModel 
+class PSF_EXPORT PeakParameterFwhm : public ParameterModel 
 {
 public:
     PeakParameterFwhm() : minimalPeakHeightToLearnFrom_(0) {}
@@ -459,8 +459,8 @@ public:
      * The FWHM at a specific mass channel.
      *
      * @param mz Mass channel; has to be positive.
-     * @throw ms::PreconditionViolation Parameter mz is not positive.
-     * @throw ms::PostconditionViolation The computed fwhm is negative or zero. This may
+     * @throw psf::PreconditionViolation Parameter mz is not positive.
+     * @throw psf::PostconditionViolation The computed fwhm is negative or zero. This may
      *      be caused by an invalid ParameterModel.
      */
     double at(const double mz) const {
@@ -487,7 +487,7 @@ public:
      * @param first Points to the first Element of the sequence.
      * @param last Points to one past the last Element of the sequence.
      *
-     * @throw ms::Starvation To few or bad data extracted from the input sequence to make a
+     * @throw psf::Starvation To few or bad data extracted from the input sequence to make a
      *                       calibration possible.
      */
     template< typename FwdIter, typename MzExtractor, typename IntensityExtractor >
@@ -522,8 +522,8 @@ private:
      * If new regression methods should be added, move the implementation of the learn_
      * function to policy classes.
      *
-     * @throw ms::PreconditionViolation Parameter pairs is an empty vector.
-     * @throw ms::InvariantViolation Numerical regression algorithm failed.
+     * @throw psf::PreconditionViolation Parameter pairs is an empty vector.
+     * @throw psf::InvariantViolation Numerical regression algorithm failed.
      */
     template< typename MzExtractor >
     void learn_(const std::vector<std::pair<typename MzExtractor::result_type, typename MzExtractor::result_type> >& pairs);
@@ -576,19 +576,19 @@ void PeakParameterFwhm<ParameterModel>::learnFrom(const MzExtractor& get_mz, con
     MzWidthPairs_ pairs = measureFullWidths(get_mz, get_int, first, last, fractionOfMaximum_, getMinimalPeakHeightToLearnFrom());        
 
     if(pairs.empty()) {
-        throw ms::Starvation("PeakParameterFwhm::learnFrom(): No (Mz | FWHM) could be measured in input spectrum to learn from.");
+        throw psf::Starvation("PeakParameterFwhm::learnFrom(): No (Mz | FWHM) could be measured in input spectrum to learn from.");
     }
 
     // fit the PeakParameterModel to the measured data
     try {
         learn_<MzExtractor>(pairs);
-    } catch(const ms::InvariantViolation& e) {
-		MSPP_UNUSED(e);
-        MSPP_LOG(logWARNING) << "PeakParameterFwhm::learnFrom(): Numerical regression failed.";
-        throw ms::Starvation("PeakParameterFwhm::learnFrom(): Regression of the parameter model for the measured (Mz | FWHM) pairs failed.");
+    } catch(const psf::InvariantViolation& e) {
+		PSF_UNUSED(e);
+        PSF_LOG(logWARNING) << "PeakParameterFwhm::learnFrom(): Numerical regression failed.";
+        throw psf::Starvation("PeakParameterFwhm::learnFrom(): Regression of the parameter model for the measured (Mz | FWHM) pairs failed.");
     }
     
-    MSPP_LOG(logINFO) << "Learned peak parameter FWHM from spectrum. FWHM at 400 Th is now " << at(400)  << " Th. This corresponds to a resolution of " << 400./at(400) << ".";
+    PSF_LOG(logINFO) << "Learned peak parameter FWHM from spectrum. FWHM at 400 Th is now " << at(400)  << " Th. This corresponds to a resolution of " << 400./at(400) << ".";
 }
 
 template <typename ParameterModel>
@@ -658,13 +658,13 @@ void PeakParameterFwhm<ParameterModel>::learn_(const std::vector<std::pair<typen
 
     /* set the fitted parameters */
     for(linalg::Matrix<double>::difference_type_1 index = 0; index < x.rowCount(); ++index) {
-        MSPP_LOG(logDEBUG2) << "PeakParameterFwhm::learn_(): Parameter " << index << " found: " <<  x(index, 0);
+        PSF_LOG(logDEBUG2) << "PeakParameterFwhm::learn_(): Parameter " << index << " found: " <<  x(index, 0);
         
         mspp_invariant(index >= 0, "PeakParameterFwhm::learn_(): index may not be negative before calling setParameter(index,0).");
         this->ParameterModel::setParameter(index, x(static_cast<unsigned>(index), 0));    
     }
 }
 
-} /* namespace ms */
+} /* namespace psf */
 
 #endif /*__PEAKPARAMETER_H__*/

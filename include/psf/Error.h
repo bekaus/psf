@@ -29,7 +29,7 @@
 #include <exception>
 #include <string>
 
-namespace ms
+namespace psf
 {
 
 //////////////////
@@ -85,7 +85,7 @@ protected:
 *   In general logic errors are originated from invalid external input or code bugs, which are
 *   causing the ms++ to run outside expected parameter ranges.
 */
-class LogicError : public ms::Exception
+class LogicError : public psf::Exception
 {
 public:
     explicit LogicError(const char * message) : Exception(message) {}
@@ -100,7 +100,7 @@ public:
 *   Runtime errors are caused by not acquirable system resources (like memory, file handles, network etc.),
 *   race conditions of different threads or processes and other unforseeable failures.
 */
-class RuntimeError : public ms::Exception
+class RuntimeError : public psf::Exception
 {
 public:
     explicit RuntimeError(const char* message) : Exception(message) {}
@@ -231,42 +231,42 @@ inline
 void throw_invariant_error(bool predicate, const char* message)
 {
     if (!predicate)
-        throw ms::InvariantViolation(message);
+        throw psf::InvariantViolation(message);
 }
 
 inline
 void throw_precondition_error(bool predicate, const char* message)
 {
     if (!predicate)
-        throw ms::PreconditionViolation(message);
+        throw psf::PreconditionViolation(message);
 }
 
 inline
 void throw_postcondition_error(bool predicate, const char* message)
 {
     if (!predicate)
-        throw ms::PostconditionViolation(message);
+        throw psf::PostconditionViolation(message);
 }
 
 inline
 void throw_invariant_error(bool predicate, const std::string& message)
 {
     if (!predicate)
-        throw ms::InvariantViolation(message);
+        throw psf::InvariantViolation(message);
 }
 
 inline
 void throw_precondition_error(bool predicate, const std::string& message)
 {
     if (!predicate)
-        throw ms::PreconditionViolation(message);
+        throw psf::PreconditionViolation(message);
 }
 
 inline
 void throw_postcondition_error(bool predicate, const std::string& message)
 {
     if (!predicate)
-        throw ms::PostconditionViolation(message);
+        throw psf::PostconditionViolation(message);
 }
 
 ///////////////////////////////////////////////
@@ -274,21 +274,21 @@ void throw_postcondition_error(bool predicate, const std::string& message)
 ///////////////////////////////////////////////
 
 /**
-* Throws a ms::PreconditionViolation, if the PREDICATE is false.
+* Throws a psf::PreconditionViolation, if the PREDICATE is false.
 */
-#define mspp_precondition(PREDICATE, MESSAGE) ms::throw_precondition_error((PREDICATE), MESSAGE)
+#define mspp_precondition(PREDICATE, MESSAGE) psf::throw_precondition_error((PREDICATE), MESSAGE)
 /**
-* Throws a ms::PostconditionViolation, if the PREDICATE is false.
+* Throws a psf::PostconditionViolation, if the PREDICATE is false.
 */
-#define mspp_postcondition(PREDICATE, MESSAGE) ms::throw_postcondition_error((PREDICATE), MESSAGE)
+#define mspp_postcondition(PREDICATE, MESSAGE) psf::throw_postcondition_error((PREDICATE), MESSAGE)
 /**
-* Throws a ms::InvariantViolation, if the PREDICATE is false.
+* Throws a psf::InvariantViolation, if the PREDICATE is false.
 */
-#define mspp_invariant(PREDICATE, MESSAGE) ms::throw_invariant_error((PREDICATE), MESSAGE)
+#define mspp_invariant(PREDICATE, MESSAGE) psf::throw_invariant_error((PREDICATE), MESSAGE)
 /**
 * Throws a RuntimeError.
 */
-#define mspp_fail(MESSAGE) throw ms::RuntimeError(MESSAGE)
+#define mspp_fail(MESSAGE) throw psf::RuntimeError(MESSAGE)
 
-} /* namespace ms */
+} /* namespace psf */
 #endif /* __ERROR_H__ */

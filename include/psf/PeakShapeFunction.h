@@ -75,14 +75,14 @@
  * with higher masses). So, this function should only be used in a relatively small mass interval, where one
  * can safely neglect this change in the peak width.
  *
- * @see ms::GaussianPeakShapeFunction
+ * @see psf::GaussianPeakShapeFunction
  *
  *
  * @subsection orbipsf Orbitrap
  * The Orbitrap peak shape is gaussian. The full width at half maximum of the gaussian depends on the
  * absolute value of the mass channel and is calculated as follows: @f$ \mathrm{FWHM} = a\cdot\mathrm{mass}\sqrt{\mathrm{mass}} @f$.
  *
- * @see ms::OrbitrapPeakShapeFunction
+ * @see psf::OrbitrapPeakShapeFunction
  *
  *
  * @subsection orbiboxpsf Orbitrap Box
@@ -94,7 +94,7 @@
  * far away from a box, this is a very crude approximation. Nevertheless, it can be used to speed up the calculation on good data sets
  * (high signal-to-noise ratio, few overlapping isotope patterns etc.) and can perform passable on such data.
  *
- * @see ms::OrbiBoxPeakShapeFunction
+ * @see psf::OrbiBoxPeakShapeFunction
  *
  *
  * @subsection tofpsf Time-of-Flight
@@ -104,7 +104,7 @@
  * estimator (by fitting the function on a given spectrum).
  * This formula can be deduced from the physics of a time-of-flight mass spectrometer.
  * 
- * @see ms::TOFPeakShapeFunction and ms::TOFPeakShapeFunctionEstimator
+ * @see psf::TOFPeakShapeFunction and psf::TOFPeakShapeFunctionEstimator
  *
  *
  *
@@ -113,7 +113,7 @@
  * @date 2009-06-09
  */
 
-namespace ms
+namespace psf
 {
 /**
  * The peak shape functions, which are implementing the abstract PeakShapeFunction interface.
@@ -124,7 +124,7 @@ namespace ms
  * @author Bernhard X. Kausler <bernhard.kausler@iwr.uni-heidelberg.de>
  * @date 2009-04-14
  */
-enum MSPP_EXPORT PeakShapeFunctionTypes {box, gaussian, orbi, orbiBox, tof};
+enum PSF_EXPORT PeakShapeFunctionTypes {box, gaussian, orbi, orbiBox, tof};
 
 /**
  * Encapsulates the PeakShapeFunctionTypes and provides conversion functions.
@@ -132,7 +132,7 @@ enum MSPP_EXPORT PeakShapeFunctionTypes {box, gaussian, orbi, orbiBox, tof};
  * @author Bernhard X. Kausler <bernhard.kausler@iwr.uni-heidelberg.de>
  * @date 2009-04-14
  */
-class MSPP_EXPORT PeakShapeFunctionType
+class PSF_EXPORT PeakShapeFunctionType
 {
     public:
         /**
@@ -155,9 +155,9 @@ class MSPP_EXPORT PeakShapeFunctionType
 
 
 /**
- * Implements a generic ms::PeakShapeFunction.
+ * Implements a generic psf::PeakShapeFunction.
  *
- * This generic implementation of the ms::PeakShapeFunction interface hast to be parameterized
+ * This generic implementation of the psf::PeakShapeFunction interface hast to be parameterized
  * by three template parameters.
  *
  * Use 'typedef PeakShapeFunctionTemplate<...> MyPeakShapeFunction' to implement new peak shape
@@ -178,11 +178,11 @@ class MSPP_EXPORT PeakShapeFunctionType
  * @param PeakShapeFunctionTypeT The proper name of the peak shape function. Can be found
  *                               in the headerfile 'PeakShapeFunction.h'.
  *
- * @see ms::OrbitrapPeakShapeFunction
- * @see ms::GaussianPeakShapeFunction
+ * @see psf::OrbitrapPeakShapeFunction
+ * @see psf::GaussianPeakShapeFunction
  */
 template <typename PeakShapeT, typename PeakParameterT, PeakShapeFunctionTypes PeakShapeFunctionTypeT>
-class MSPP_EXPORT PeakShapeFunctionTemplate
+class PSF_EXPORT PeakShapeFunctionTemplate
 {
 public:
     PeakShapeFunctionTemplate();
@@ -242,7 +242,7 @@ public:
      * @param first Points to the first Element of the spectrum.
      * @param last Points to one past the last Element of the spectrum.
      *
-     * @throw ms::Starvation To few or bad data extracted from the input spectrum to make a
+     * @throw psf::Starvation To few or bad data extracted from the input spectrum to make a
      *                       calibration possible.
      */
     template< typename FwdIter, typename MzExtractor, typename IntensityExtractor >
@@ -288,14 +288,14 @@ private:
 *
 * This function is robust concerning autocalibration, because the autocalibration cannot set the parameter a so, that the function becomes invalid in some
 * mz ranges. That's why we choose a PeakParameter, which is constrained in the origin.
-* @see ms::RobustOrbitrapPeakShapeFunction 
+* @see psf::RobustOrbitrapPeakShapeFunction 
 */
 typedef PeakShapeFunctionTemplate<GaussianPeakShape, OrbitrapWithOriginFwhm, orbi> OrbitrapPeakShapeFunction;
 
 /**
 * A peak shape function as it occurs in centroided Orbitrap mass spectra.
 *
-* The function is similar to the @see ms::OrbitrapPeakShapeFunction, the only difference being that 
+* The function is similar to the @see psf::OrbitrapPeakShapeFunction, the only difference being that 
 * the window shape is a box. Support threshold calculation etc are identical to the @see OrbitrapPeakShapeFunction.
 * The Orbitrap peak shape function is parameterized via a linear sqrt model, which goes through the origin: @f$ f(x) = a\cdot x\sqrt{x}@f$ .
 * You can set the model parameter a via the corresponding getter/setter method in the
@@ -303,7 +303,7 @@ typedef PeakShapeFunctionTemplate<GaussianPeakShape, OrbitrapWithOriginFwhm, orb
 *
 * This function is robust concerning autocalibration, because the autocalibration cannot set the parameter a so, that the function becomes invalid in some
 * mz ranges. That's why we choose a PeakParameter, which is constrained in the origin.
-* @see ms::RobustOrbitrapPeakShapeFunction 
+* @see psf::RobustOrbitrapPeakShapeFunction 
 */
 typedef PeakShapeFunctionTemplate<BoxPeakShape, OrbitrapWithOriginFwhm, orbi> OrbitrapBoxPeakShapeFunction;
 
@@ -325,7 +325,7 @@ typedef PeakShapeFunctionTemplate<GaussianPeakShape, ConstantFwhm, gaussian> Gau
 ////////////////////
 
 // operator()
-template <typename PeakShapeT, typename PeakParameterT, ms::PeakShapeFunctionTypes PeakShapeFunctionTypeT>
+template <typename PeakShapeT, typename PeakParameterT, psf::PeakShapeFunctionTypes PeakShapeFunctionTypeT>
 double 
 PeakShapeFunctionTemplate<PeakShapeT, PeakParameterT, PeakShapeFunctionTypeT>::
 operator()(const double referenceMass, const double observedMass) const {
@@ -342,7 +342,7 @@ operator()(const double referenceMass, const double observedMass) const {
 }
 
 // getSupportThreshold()
-template <typename PeakShapeT, typename PeakParameterT, ms::PeakShapeFunctionTypes PeakShapeFunctionTypeT>
+template <typename PeakShapeT, typename PeakParameterT, psf::PeakShapeFunctionTypes PeakShapeFunctionTypeT>
 double 
 PeakShapeFunctionTemplate<PeakShapeT, PeakParameterT, PeakShapeFunctionTypeT>::
 getSupportThreshold(const double mz) const {
@@ -351,7 +351,7 @@ getSupportThreshold(const double mz) const {
 }
 
 // getType()
-template <typename PeakShapeT, typename PeakParameterT, ms::PeakShapeFunctionTypes PeakShapeFunctionTypeT>
+template <typename PeakShapeT, typename PeakParameterT, psf::PeakShapeFunctionTypes PeakShapeFunctionTypeT>
 inline
 PeakShapeFunctionType
 PeakShapeFunctionTemplate<PeakShapeT, PeakParameterT, PeakShapeFunctionTypeT>::
@@ -360,18 +360,18 @@ getType() {
 }
 
 // PeakShapeFunctionTemplate()
-template <typename PeakShapeT, typename PeakParameterT, ms::PeakShapeFunctionTypes PeakShapeFunctionTypeT>
+template <typename PeakShapeT, typename PeakParameterT, psf::PeakShapeFunctionTypes PeakShapeFunctionTypeT>
 PeakShapeFunctionTemplate<PeakShapeT, PeakParameterT, PeakShapeFunctionTypeT>::
 PeakShapeFunctionTemplate() {
 }
 
-template <typename PeakShapeT, typename PeakParameterT, ms::PeakShapeFunctionTypes PeakShapeFunctionTypeT>
+template <typename PeakShapeT, typename PeakParameterT, psf::PeakShapeFunctionTypes PeakShapeFunctionTypeT>
 PeakShapeFunctionTemplate<PeakShapeT, PeakParameterT, PeakShapeFunctionTypeT>::
 PeakShapeFunctionTemplate(const double a) {
     this->setA(a);
 }
 
-template <typename PeakShapeT, typename PeakParameterT, ms::PeakShapeFunctionTypes PeakShapeFunctionTypeT>
+template <typename PeakShapeT, typename PeakParameterT, psf::PeakShapeFunctionTypes PeakShapeFunctionTypeT>
 PeakShapeFunctionTemplate<PeakShapeT, PeakParameterT, PeakShapeFunctionTypeT>::
 PeakShapeFunctionTemplate(const double a, const double b) {
     this->setA(a);
@@ -379,7 +379,7 @@ PeakShapeFunctionTemplate(const double a, const double b) {
 }
 
 // setA()
-template <typename PeakShapeT, typename PeakParameterT, ms::PeakShapeFunctionTypes PeakShapeFunctionTypeT>
+template <typename PeakShapeT, typename PeakParameterT, psf::PeakShapeFunctionTypes PeakShapeFunctionTypeT>
 inline
 void
 PeakShapeFunctionTemplate<PeakShapeT, PeakParameterT, PeakShapeFunctionTypeT>::
@@ -387,7 +387,7 @@ setA(const double a) {
     peakparameter_.setA(a);
 }
 // getA()
-template <typename PeakShapeT, typename PeakParameterT, ms::PeakShapeFunctionTypes PeakShapeFunctionTypeT>
+template <typename PeakShapeT, typename PeakParameterT, psf::PeakShapeFunctionTypes PeakShapeFunctionTypeT>
 inline
 double
 PeakShapeFunctionTemplate<PeakShapeT, PeakParameterT, PeakShapeFunctionTypeT>::
@@ -396,7 +396,7 @@ getA() const {
 }
 
 // setB()
-template <typename PeakShapeT, typename PeakParameterT, ms::PeakShapeFunctionTypes PeakShapeFunctionTypeT>
+template <typename PeakShapeT, typename PeakParameterT, psf::PeakShapeFunctionTypes PeakShapeFunctionTypeT>
 inline
 void
 PeakShapeFunctionTemplate<PeakShapeT, PeakParameterT, PeakShapeFunctionTypeT>::
@@ -404,7 +404,7 @@ setB(const double b) {
     peakparameter_.setB(b);
 }
 // getB()
-template <typename PeakShapeT, typename PeakParameterT, ms::PeakShapeFunctionTypes PeakShapeFunctionTypeT>
+template <typename PeakShapeT, typename PeakParameterT, psf::PeakShapeFunctionTypes PeakShapeFunctionTypeT>
 inline 
 double
 PeakShapeFunctionTemplate<PeakShapeT, PeakParameterT, PeakShapeFunctionTypeT>::
@@ -413,7 +413,7 @@ getB() const {
 }
 
 // calibrateFor()
-template <typename PeakShapeT, typename PeakParameterT, ms::PeakShapeFunctionTypes PeakShapeFunctionTypeT>
+template <typename PeakShapeT, typename PeakParameterT, psf::PeakShapeFunctionTypes PeakShapeFunctionTypeT>
 template< typename FwdIter, typename MzExtractor, typename IntensityExtractor >
 void
 PeakShapeFunctionTemplate<PeakShapeT, PeakParameterT, PeakShapeFunctionTypeT>::
@@ -422,7 +422,7 @@ calibrateFor(const MzExtractor& get_mz, const IntensityExtractor& get_int, FwdIt
 }
 
 // setMinimalPeakHeightForCalibration()
-template <typename PeakShapeT, typename PeakParameterT, ms::PeakShapeFunctionTypes PeakShapeFunctionTypeT>
+template <typename PeakShapeT, typename PeakParameterT, psf::PeakShapeFunctionTypes PeakShapeFunctionTypeT>
 void 
 PeakShapeFunctionTemplate<PeakShapeT, PeakParameterT, PeakShapeFunctionTypeT>::
 setMinimalPeakHeightForCalibration(const double minimalHeight) {
@@ -430,14 +430,14 @@ setMinimalPeakHeightForCalibration(const double minimalHeight) {
 }
 
 // getMinimalPeakHeightForCalibration()
-template <typename PeakShapeT, typename PeakParameterT, ms::PeakShapeFunctionTypes PeakShapeFunctionTypeT>
+template <typename PeakShapeT, typename PeakParameterT, psf::PeakShapeFunctionTypes PeakShapeFunctionTypeT>
 double
 PeakShapeFunctionTemplate<PeakShapeT, PeakParameterT, PeakShapeFunctionTypeT>::
 getMinimalPeakHeightForCalibration() {
     return peakparameter_.getMinimalPeakHeightToLearnFrom();
 }
 
-} /* namespace ms */
+} /* namespace psf */
 
 #endif /*__PEAKSHAPEFUNCTION_H__*/
 

@@ -47,7 +47,7 @@ struct PeakParameterTestSuite : vigra::test_suite {
     }
 
     void testSet_GetMinimalPeakHeightToLearnFrom() {
-        using namespace ms;
+        using namespace psf;
         PeakParameterFwhm<ConstantModel> fwhm;
 
         // should be zero by default after construction
@@ -64,7 +64,7 @@ struct PeakParameterTestSuite : vigra::test_suite {
     }
 
     void testOrbitrapFwhm() {
-        ms::OrbitrapFwhm fwhm;
+        psf::OrbitrapFwhm fwhm;
     
         // number of parameters
         shouldEqual(fwhm.numberOfParameters(), unsigned(2));
@@ -101,8 +101,8 @@ struct PeakParameterTestSuite : vigra::test_suite {
         bool thrown = false;
         try {
             fwhm.setParameter(2,0);
-        } catch(const ms::PreconditionViolation& e) {
-			MSPP_UNUSED(e);
+        } catch(const psf::PreconditionViolation& e) {
+			PSF_UNUSED(e);
             thrown = true;
         }
         should(thrown);
@@ -111,8 +111,8 @@ struct PeakParameterTestSuite : vigra::test_suite {
         thrown = false;
         try {
             fwhm.getParameter(2);
-        } catch(const ms::PreconditionViolation& e) {
-			MSPP_UNUSED(e);
+        } catch(const psf::PreconditionViolation& e) {
+			PSF_UNUSED(e);
             thrown = true;
         }
         should(thrown);
@@ -126,8 +126,8 @@ struct PeakParameterTestSuite : vigra::test_suite {
         // no masses <= 0
         try {
             fwhm.at(-123.2);
-        } catch (const ms::PreconditionViolation& e) {
-			MSPP_UNUSED(e);
+        } catch (const psf::PreconditionViolation& e) {
+			PSF_UNUSED(e);
             thrown = true;        
         }
         should(thrown);
@@ -135,8 +135,8 @@ struct PeakParameterTestSuite : vigra::test_suite {
 
         try {
             fwhm.at(0);
-        } catch (const ms::PreconditionViolation& e) {
-			MSPP_UNUSED(e);
+        } catch (const psf::PreconditionViolation& e) {
+			PSF_UNUSED(e);
             thrown = true;        
         }
         should(thrown);
@@ -147,8 +147,8 @@ struct PeakParameterTestSuite : vigra::test_suite {
         fwhm.setB(0.1);
         try {
             fwhm.at(400);
-        } catch (const ms::PostconditionViolation& e) {
-			MSPP_UNUSED(e);
+        } catch (const psf::PostconditionViolation& e) {
+			PSF_UNUSED(e);
             thrown = true;        
         }
         should(thrown);
@@ -157,7 +157,7 @@ struct PeakParameterTestSuite : vigra::test_suite {
 
 
     void testFtIcrFwhm() {
-        ms::FtIcrFwhm fwhm;
+        psf::FtIcrFwhm fwhm;
 
         // number of parameters
         shouldEqual(fwhm.numberOfParameters(), unsigned(2));
@@ -194,8 +194,8 @@ struct PeakParameterTestSuite : vigra::test_suite {
         bool thrown = false;
         try {
             fwhm.setParameter(2,0);
-        } catch(const ms::PreconditionViolation& e) {
-			MSPP_UNUSED(e);
+        } catch(const psf::PreconditionViolation& e) {
+			PSF_UNUSED(e);
             thrown = true;
         }
         should(thrown);
@@ -204,8 +204,8 @@ struct PeakParameterTestSuite : vigra::test_suite {
         thrown = false;
         try {
             fwhm.getParameter(2);
-        } catch(const ms::PreconditionViolation& e) {
-			MSPP_UNUSED(e);
+        } catch(const psf::PreconditionViolation& e) {
+			PSF_UNUSED(e);
             thrown = true;
         }
         should(thrown);
@@ -220,8 +220,8 @@ struct PeakParameterTestSuite : vigra::test_suite {
         thrown = false;
         try {
             fwhm.at(-123.2);
-        } catch (const ms::PreconditionViolation& e) {
-			MSPP_UNUSED(e);
+        } catch (const psf::PreconditionViolation& e) {
+			PSF_UNUSED(e);
             thrown = true;        
         }
         should(thrown);
@@ -229,8 +229,8 @@ struct PeakParameterTestSuite : vigra::test_suite {
 
         try {
             fwhm.at(0);
-        } catch (const ms::PreconditionViolation& e) {
-			MSPP_UNUSED(e);
+        } catch (const psf::PreconditionViolation& e) {
+			PSF_UNUSED(e);
             thrown = true;        
         }
         should(thrown);
@@ -241,8 +241,8 @@ struct PeakParameterTestSuite : vigra::test_suite {
         fwhm.setB(0.1);
         try {
             fwhm.at(400);
-        } catch (const ms::PostconditionViolation& e) {
-			MSPP_UNUSED(e);
+        } catch (const psf::PostconditionViolation& e) {
+			PSF_UNUSED(e);
             thrown = true;        
         }
         should(thrown);
@@ -251,7 +251,7 @@ struct PeakParameterTestSuite : vigra::test_suite {
 
     
     void testTofFwhm() {
-        ms::TofFwhm fwhm;
+        psf::TofFwhm fwhm;
 
         // number of parameters
         shouldEqual(fwhm.numberOfParameters(), unsigned(2));
@@ -288,8 +288,8 @@ struct PeakParameterTestSuite : vigra::test_suite {
         bool thrown = false;
         try {
             fwhm.setParameter(2,0);
-        } catch(const ms::PreconditionViolation& e) {
-			MSPP_UNUSED(e);
+        } catch(const psf::PreconditionViolation& e) {
+			PSF_UNUSED(e);
             thrown = true;
         }
         should(thrown);
@@ -298,8 +298,8 @@ struct PeakParameterTestSuite : vigra::test_suite {
         thrown = false;
         try {
             fwhm.getParameter(2);
-        } catch(const ms::PreconditionViolation& e) {
-			MSPP_UNUSED(e);
+        } catch(const psf::PreconditionViolation& e) {
+			PSF_UNUSED(e);
             thrown = true;
         }
         should(thrown);
@@ -314,8 +314,8 @@ struct PeakParameterTestSuite : vigra::test_suite {
         thrown = false;
         try {
             fwhm.at(-123.2);
-        } catch (const ms::PreconditionViolation& e) {
-			MSPP_UNUSED(e);
+        } catch (const psf::PreconditionViolation& e) {
+			PSF_UNUSED(e);
             thrown = true;        
         }
         should(thrown);
@@ -323,8 +323,8 @@ struct PeakParameterTestSuite : vigra::test_suite {
 
         try {
             fwhm.at(0);
-        } catch (const ms::PreconditionViolation& e) {
-			MSPP_UNUSED(e);
+        } catch (const psf::PreconditionViolation& e) {
+			PSF_UNUSED(e);
             thrown = true;        
         }
         should(thrown);
@@ -335,8 +335,8 @@ struct PeakParameterTestSuite : vigra::test_suite {
         fwhm.setB(0.1);
         try {
             fwhm.at(400);
-        } catch (const ms::PostconditionViolation& e) {
-			MSPP_UNUSED(e);
+        } catch (const psf::PostconditionViolation& e) {
+			PSF_UNUSED(e);
             thrown = true;        
         }
         should(thrown);
@@ -344,7 +344,7 @@ struct PeakParameterTestSuite : vigra::test_suite {
     }
 
     void testConstantFwhm() {
-        ms::ConstantFwhm fwhm;
+        psf::ConstantFwhm fwhm;
 
         // number of parameters
         shouldEqual(fwhm.numberOfParameters(), unsigned(1));
@@ -367,8 +367,8 @@ struct PeakParameterTestSuite : vigra::test_suite {
         bool thrown = false;
         try {
             fwhm.setParameter(1,0);
-        } catch(const ms::PreconditionViolation& e) {
-			MSPP_UNUSED(e);
+        } catch(const psf::PreconditionViolation& e) {
+			PSF_UNUSED(e);
             thrown = true;
         }
         should(thrown);
@@ -377,8 +377,8 @@ struct PeakParameterTestSuite : vigra::test_suite {
         thrown = false;
         try {
             fwhm.getParameter(1);
-        } catch(const ms::PreconditionViolation& e) {
-			MSPP_UNUSED(e);
+        } catch(const psf::PreconditionViolation& e) {
+			PSF_UNUSED(e);
             thrown = true;
         }
         should(thrown);
@@ -396,8 +396,8 @@ struct PeakParameterTestSuite : vigra::test_suite {
         fwhm.setA(0.1);
         try {
             fwhm.at(-123.2);
-        } catch (const ms::PreconditionViolation& e) {
-			MSPP_UNUSED(e);
+        } catch (const psf::PreconditionViolation& e) {
+			PSF_UNUSED(e);
             thrown = true;        
         }
         should(thrown);
@@ -405,8 +405,8 @@ struct PeakParameterTestSuite : vigra::test_suite {
 
         try {
             fwhm.at(0);
-        } catch (const ms::PreconditionViolation& e) {
-			MSPP_UNUSED(e);
+        } catch (const psf::PreconditionViolation& e) {
+			PSF_UNUSED(e);
             thrown = true;        
         }
         should(thrown);
@@ -416,8 +416,8 @@ struct PeakParameterTestSuite : vigra::test_suite {
         fwhm.setA(-0.1);
         try {
             fwhm.at(400);
-        } catch (const ms::PostconditionViolation& e) {
-			MSPP_UNUSED(e);
+        } catch (const psf::PostconditionViolation& e) {
+			PSF_UNUSED(e);
             thrown = true;        
         }
         should(thrown);
@@ -425,11 +425,11 @@ struct PeakParameterTestSuite : vigra::test_suite {
     }
 
     void testConstantFwhmLearnFrom() {
-        using namespace ms;
+        using namespace psf;
         using namespace std;
 	MzExtractor get_mz;
 	IntensityExtractor get_int;
-        MSPP_LOG(logINFO) << "Testing ConstantFwhm learnFrom().";
+        PSF_LOG(logINFO) << "Testing ConstantFwhm learnFrom().";
         ConstantFwhm fwhm;
 	Spectrum spectrum;
         loadSpectrumElements(spectrum, dirTestdata + "/PeakParameter/realistic_ms1.wsv");
@@ -440,11 +440,11 @@ struct PeakParameterTestSuite : vigra::test_suite {
     }
 
     void testOrbitrapFwhmLearnFrom() {
-        using namespace ms;
+        using namespace psf;
         using namespace std;
 	MzExtractor get_mz;
 	IntensityExtractor get_int;
-        MSPP_LOG(logINFO) << "Testing OrbitrapFwhm learnFrom().";
+        PSF_LOG(logINFO) << "Testing OrbitrapFwhm learnFrom().";
         OrbitrapFwhm fwhm;
 	Spectrum spectrum;
         loadSpectrumElements(spectrum, dirTestdata + "/shared_data/orbi_ms1.wsv");
@@ -457,11 +457,11 @@ struct PeakParameterTestSuite : vigra::test_suite {
     }
 
     void testFtIcrFwhmLearnFrom() {
-        using namespace ms;
+        using namespace psf;
         using namespace std;
 	MzExtractor get_mz;
 	IntensityExtractor get_int;
-        MSPP_LOG(logINFO) << "Testing FtIcrFwhm learnFrom()."; 
+        PSF_LOG(logINFO) << "Testing FtIcrFwhm learnFrom()."; 
         FtIcrFwhm fwhm;
 	Spectrum spectrum;
         loadSpectrumElements(spectrum, dirTestdata + "/PeakParameter/realistic_ms1.wsv");
@@ -470,18 +470,18 @@ struct PeakParameterTestSuite : vigra::test_suite {
         fwhm.setA(0); // reset 
         fwhm.setB(0);
         fwhm.learnFrom(get_mz, get_int, spectrum.begin(), spectrum.end());
-        MSPP_LOG(logINFO) << "Learned FtIcrFwhm Parameter A: " << fwhm.getA();
-        MSPP_LOG(logINFO) << "Learned FtIcrFwhm Parameter B: " << fwhm.getB();
+        PSF_LOG(logINFO) << "Learned FtIcrFwhm Parameter A: " << fwhm.getA();
+        PSF_LOG(logINFO) << "Learned FtIcrFwhm Parameter B: " << fwhm.getB();
         shouldEqualTolerance(fwhm.getA(), 0., 0.00001);
         shouldEqualTolerance(fwhm.getB(), 0.031325, 0.00001);
     }
 
     void testTofFwhmLearnFrom() {
-        using namespace ms;
+        using namespace psf;
         using namespace std;
 	MzExtractor get_mz;
 	IntensityExtractor get_int;
-        MSPP_LOG(logINFO) << "Testing TofFwhm learnFrom().";
+        PSF_LOG(logINFO) << "Testing TofFwhm learnFrom().";
         TofFwhm fwhm;
 	Spectrum spectrum;
         loadSpectrumElements(spectrum, dirTestdata + "/PeakParameter/realistic_ms1.wsv");

@@ -42,21 +42,21 @@
  *
  *
  * @section usage Usage
- * @c ms++ provides logging to @c stderr via the @c MSPP_LOG macro:
+ * @c ms++ provides logging to @c stderr via the @c PSF_LOG macro:
  * @code
- * MSPP_LOG(logINFO) << "Hello" << username << "no endl, will be appended automatically";
+ * PSF_LOG(logINFO) << "Hello" << username << "no endl, will be appended automatically";
  * @endcode
  *
  * You can set a plateu logging level:
  * @code
- * #undef MSPP_LOG_MAX_LEVEL
- * #define MSPP_LOG_MAX_LEVEL ms::logWARNING
+ * #undef PSF_LOG_MAX_LEVEL
+ * #define PSF_LOG_MAX_LEVEL psf::logWARNING
  * @endcode
  *
  * This can be used to set a global logging level or to construct a more fine grained
  * structure (for example, different logging levels per file or code segment).
  *
- * The logging macro MSPP_LOG ensures, that logging code will only be compiled into the final
+ * The logging macro PSF_LOG ensures, that logging code will only be compiled into the final
  * binary, if it corresponds to the set plateu logging level.
  *
  * <em>
@@ -93,7 +93,7 @@
 
 
 
-namespace ms
+namespace psf
 {
 
 
@@ -157,7 +157,7 @@ public:
 
 
 // getRedirect()
-inline FILE*& ms::Output2FILE::getRedirect()
+inline FILE*& psf::Output2FILE::getRedirect()
 {
     static FILE* pStream = stderr;
     return pStream;
@@ -166,7 +166,7 @@ inline FILE*& ms::Output2FILE::getRedirect()
 
 
 // output()
-inline void ms::Output2FILE::output(const std::string& msg)
+inline void psf::Output2FILE::output(const std::string& msg)
 {
     FILE* pStream = getRedirect();
     if (!pStream) {
@@ -219,7 +219,7 @@ public:
      * This function can be used as a safeguard in the logging macros to defend against illegal
      * user defined global logging levels.
      *
-     * @return The deepest ms::LogLevel available.
+     * @return The deepest psf::LogLevel available.
      */
     static LogLevel& getReportingLevel();
 
@@ -258,7 +258,7 @@ private:
 
 // Log()
 template <typename T>
-ms::Log<T>::Log()
+psf::Log<T>::Log()
 {
 }
 
@@ -266,19 +266,19 @@ ms::Log<T>::Log()
 
 // get()
 template <typename T>
-std::ostringstream& ms::Log<T>::get(LogLevel level)
+std::ostringstream& psf::Log<T>::get(LogLevel level)
 {
     // check for valid logging level
     LogLevel ll = level;
     if ( ll <= logNO_LOGGING || ll > getReportingLevel() ) {
-        ms::Log<T>().get(ms::logWARNING) << "Log<T>::get(): Invalid logging level '" << ll << "'. Using INFO level as default.";
+        psf::Log<T>().get(psf::logWARNING) << "Log<T>::get(): Invalid logging level '" << ll << "'. Using INFO level as default.";
         ll = logINFO;
     }
 
     // print standard logging preambel to logging stream
-    os_ << "- " << ms::nowTime();
+    os_ << "- " << psf::nowTime();
     os_ << " " << toString(ll) << ": ";
-    os_ << std::string(ll > ms::logDEBUG ? ll - ms::logDEBUG : 0, '\t');
+    os_ << std::string(ll > psf::logDEBUG ? ll - psf::logDEBUG : 0, '\t');
 
     return os_;
 }
@@ -287,7 +287,7 @@ std::ostringstream& ms::Log<T>::get(LogLevel level)
 
 // ~Log()
 template <typename T>
-ms::Log<T>::~Log()
+psf::Log<T>::~Log()
 {
     os_ << std::endl;
     T::output(os_.str());
@@ -297,9 +297,9 @@ ms::Log<T>::~Log()
 
 // getReportingLevel()
 template <typename T>
-ms::LogLevel& ms::Log<T>::getReportingLevel()
+psf::LogLevel& psf::Log<T>::getReportingLevel()
 {
-    static ms::LogLevel reportingLevel = ms::logDEBUG4;
+    static psf::LogLevel reportingLevel = psf::logDEBUG4;
     return reportingLevel;
 }
 
@@ -307,10 +307,10 @@ ms::LogLevel& ms::Log<T>::getReportingLevel()
 
 // toString()
 template <typename T>
-std::string ms::Log<T>::toString(LogLevel level)
+std::string psf::Log<T>::toString(LogLevel level)
 {
     if (level > getReportingLevel() || level < logNO_LOGGING) {
-        ms::Log<T>().get(ms::logWARNING) << "Log<T>::toString(): Unknown logging level '" << level << "'. Using INFO level as default.";
+        psf::Log<T>().get(psf::logWARNING) << "Log<T>::toString(): Unknown logging level '" << level << "'. Using INFO level as default.";
         return "INFO";
     }
 
@@ -322,30 +322,30 @@ std::string ms::Log<T>::toString(LogLevel level)
 
 // fromString()
 template <typename T>
-ms::LogLevel ms::Log<T>::fromString(const std::string& level)
+psf::LogLevel psf::Log<T>::fromString(const std::string& level)
 {
     if (level == "DEBUG4")
-        return ms::logDEBUG4;
+        return psf::logDEBUG4;
     if (level == "DEBUG3")
-        return ms::logDEBUG3;
+        return psf::logDEBUG3;
     if (level == "DEBUG2")
-        return ms::logDEBUG2;
+        return psf::logDEBUG2;
     if (level == "DEBUG1")
-        return ms::logDEBUG1;
+        return psf::logDEBUG1;
     if (level == "DEBUG")
-        return ms::logDEBUG;
+        return psf::logDEBUG;
     if (level == "INFO")
-        return ms::logINFO;
+        return psf::logINFO;
     if (level == "WARNING")
-        return ms::logWARNING;
+        return psf::logWARNING;
     if (level == "ERROR")
-        return ms::logERROR;
+        return psf::logERROR;
     if (level == "NO_LOGGING")
-        return ms::logNO_LOGGING;
+        return psf::logNO_LOGGING;
 
     // else
-    ms::Log<T>().get(ms::logWARNING) << "Log<T>::fromString(): Unknown logging level '" << level << "'. Using INFO level as default.";
-    return ms::logINFO;
+    psf::Log<T>().get(psf::logWARNING) << "Log<T>::fromString(): Unknown logging level '" << level << "'. Using INFO level as default.";
+    return psf::logINFO;
 }
 
 
@@ -381,12 +381,12 @@ class FILELOG_DECLSPEC FILELog : public Log<Output2FILE> {};
  *
  * Every logging message depper than that level will not be compiled into the code.
  */
-#define FILELOG_MAX_LEVEL ms::logDEBUG4
+#define FILELOG_MAX_LEVEL psf::logDEBUG4
 #endif
 
 
 
-// MSPP_LOG()
+// PSF_LOG()
 /**
  * Logs to a file handle.
  *
@@ -396,13 +396,13 @@ class FILELOG_DECLSPEC FILELog : public Log<Output2FILE> {};
  *
  * Use it like this:
  * @code
- * MSPP_LOG(logINFO) << "some logging" << 1224 << "no endl, will be appended automatically";
+ * PSF_LOG(logINFO) << "some logging" << 1224 << "no endl, will be appended automatically";
  * @endcode
  */
-#define MSPP_LOG(level) \
+#define PSF_LOG(level) \
     if (level > FILELOG_MAX_LEVEL) ;\
-    else if (level > ms::FILELog::getReportingLevel() || !ms::Output2FILE::getRedirect()) ; \
-    else ms::FILELog().get(level)
+    else if (level > psf::FILELog::getReportingLevel() || !psf::Output2FILE::getRedirect()) ; \
+    else psf::FILELog().get(level)
 
 
 
@@ -418,7 +418,7 @@ class FILELOG_DECLSPEC FILELog : public Log<Output2FILE> {};
 	#include <windows.h>
 
 // Reopen the ms namespace.
-namespace ms {
+namespace psf {
 inline std::string nowTime()
 {
     const int MAX_LEN = 200;
@@ -448,8 +448,8 @@ inline std::string nowTime()
 } // Temporarily close ms namespace to inclue header files.
 #include <sys/time.h>
 
-// Reopen namespace ms.
-namespace ms {
+// Reopen namespace psf.
+namespace psf {
 inline std::string nowTime()
 {
     // get time
@@ -484,5 +484,5 @@ inline std::string nowTime()
 
 
 
-} /* namespace ms */
+} /* namespace psf */
 #endif /* __LOG_H__ */

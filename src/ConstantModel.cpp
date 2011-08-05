@@ -25,7 +25,7 @@
 #include <ms++/Error.h>
 #include "psf/PeakParameter.h"
 
-namespace ms
+namespace psf
 {
 unsigned int ConstantModel::numberOfParameters() {
     return numberOfParameters_;
@@ -57,4 +57,4 @@ double ConstantModel::getA() const {
     return a_;
 }
 
-} /* namespace ms */
+} /* namespace psf */
