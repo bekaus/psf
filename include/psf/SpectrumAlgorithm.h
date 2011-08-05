@@ -1,6 +1,6 @@
 #ifndef __SPECTRUMALGORITHM_H__
 #define __SPECTRUMALGORITHM_H__
-#include <ms++/config.h>
+#include <psf/config.h>
 
 #include <algorithm>
 #include <iterator>
