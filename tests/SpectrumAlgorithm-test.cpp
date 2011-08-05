@@ -144,8 +144,8 @@ struct SpectrumAlgorithmTestSuite : vigra::test_suite {
         s1.push_back(SpectrumElement(16, 1));
         s1.push_back(SpectrumElement(16.1, 0.9)); // Peak 3 right
    
-        typedef vector<pair<typename MzExtractor::result_type,
-                            typename MzExtractor::result_type
+        typedef vector<pair< MzExtractor::result_type,
+                             MzExtractor::result_type
                            > 
                       > MzWidthPair;
         MzWidthPair result;
