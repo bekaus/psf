@@ -102,7 +102,9 @@ std::istream& operator>>(std::istream& is, Spectrum& s) {
     double mz, intensity;
     if (is.good()) {
         while (is >> mz >> intensity) {
-	    s.push_back(SpectrumElement(mz, intensity));
+	    if (intensity > 0) {
+		s.push_back(SpectrumElement(mz, intensity));
+	    }
         }
     }
     return is;
