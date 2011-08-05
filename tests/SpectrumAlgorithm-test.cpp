@@ -3,8 +3,8 @@
 #include <utility>
 #include <vector>
 
-#include <ms++/Error.h>
-#include <ms++/Log.h>
+#include <psf/Error.h>
+#include <psf/Log.h>
 #include <psf/SpectrumAlgorithm.h>
 #include <psf/Spectrum.h>
 

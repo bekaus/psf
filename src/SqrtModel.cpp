@@ -1,6 +1,6 @@
 #include <cmath>
 
-#include <ms++/Error.h>
+#include <psf/Error.h>
 
 #include "psf/PeakParameter.h"
 

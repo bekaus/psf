@@ -1,7 +1,5 @@
 #include <cmath>
-
-#include <ms++/Error.h>
-
+#include <psf/Error.h>
 #include "psf/PeakParameter.h"
 
 namespace psf
@@ -12,7 +10,7 @@ unsigned int LinearSqrtModel::numberOfParameters() {
 }
 
 void LinearSqrtModel::setParameter(unsigned index, double value) {
-    mspp_precondition(index < numberOfParameters(), "LinearSqrtModel::setParameter(): Parameter index out-of-range.");
+    psf_precondition(index < numberOfParameters(), "LinearSqrtModel::setParameter(): Parameter index out-of-range.");
     if(index == 0) {    
         a_ = value;
     }
@@ -21,7 +19,7 @@ void LinearSqrtModel::setParameter(unsigned index, double value) {
     }
 }
 double LinearSqrtModel::getParameter(unsigned index) {
-    mspp_precondition(index < numberOfParameters(), "LinearSqrtModel::getParameter(): Parameter index out-of-range.");
+    psf_precondition(index < numberOfParameters(), "LinearSqrtModel::getParameter(): Parameter index out-of-range.");
     if(index == 0) {    
         return a_;
     }
@@ -31,7 +29,7 @@ double LinearSqrtModel::getParameter(unsigned index) {
 }
 
 double LinearSqrtModel::at(const double x) const {
-    mspp_precondition(x >= 0, "LinearSqrtModel::at(): Parameter x has to be >= 0.");
+    psf_precondition(x >= 0, "LinearSqrtModel::at(): Parameter x has to be >= 0.");
     return a_ * x * std::sqrt(x) + b_;
 }
 
@@ -63,16 +61,16 @@ unsigned int LinearSqrtOriginModel::numberOfParameters() {
 }
 
 void LinearSqrtOriginModel::setParameter(unsigned index, double value) {
-    mspp_precondition(index < numberOfParameters(), "LinearSqrtModel::setParameter(): Parameter index out-of-range.");    
+    psf_precondition(index < numberOfParameters(), "LinearSqrtModel::setParameter(): Parameter index out-of-range.");    
     a_ = value;
 }
 double LinearSqrtOriginModel::getParameter(unsigned index) {
-    mspp_precondition(index < numberOfParameters(), "LinearSqrtModel::getParameter(): Parameter index out-of-range.");
+    psf_precondition(index < numberOfParameters(), "LinearSqrtModel::getParameter(): Parameter index out-of-range.");
     return a_;
 }
 
 double LinearSqrtOriginModel::at(const double x) const {
-    mspp_precondition(x >= 0, "LinearSqrtOriginModel::at(): Parameter x has to be >= 0.");
+    psf_precondition(x >= 0, "LinearSqrtOriginModel::at(): Parameter x has to be >= 0.");
     return a_ * x * std::sqrt(x);
 }
 

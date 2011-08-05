@@ -38,7 +38,7 @@ public:
      *  @return A pointer to a C-string. The memory is under possession
      *          of the Exception object. Callees should NEVER try to
      *          destroy/free the returned pointer.
-     */
+    */
     virtual const char * what() const throw() {
         return what_.c_str();
     }
@@ -58,7 +58,7 @@ protected:
 *
 *   Use LogicError for defects, which in principle could be detected by codeflow analysis.
 *   In general logic errors are originated from invalid external input or code bugs, which are
-*   causing the ms++ to run outside expected parameter ranges.
+*   causing the psf to run outside expected parameter ranges.
 */
 class LogicError : public psf::Exception
 {
@@ -251,19 +251,19 @@ void throw_postcondition_error(bool predicate, const std::string& message)
 /**
 * Throws a psf::PreconditionViolation, if the PREDICATE is false.
 */
-#define mspp_precondition(PREDICATE, MESSAGE) psf::throw_precondition_error((PREDICATE), MESSAGE)
+#define psf_precondition(PREDICATE, MESSAGE) psf::throw_precondition_error((PREDICATE), MESSAGE)
 /**
 * Throws a psf::PostconditionViolation, if the PREDICATE is false.
 */
-#define mspp_postcondition(PREDICATE, MESSAGE) psf::throw_postcondition_error((PREDICATE), MESSAGE)
+#define psf_postcondition(PREDICATE, MESSAGE) psf::throw_postcondition_error((PREDICATE), MESSAGE)
 /**
 * Throws a psf::InvariantViolation, if the PREDICATE is false.
 */
-#define mspp_invariant(PREDICATE, MESSAGE) psf::throw_invariant_error((PREDICATE), MESSAGE)
+#define psf_invariant(PREDICATE, MESSAGE) psf::throw_invariant_error((PREDICATE), MESSAGE)
 /**
 * Throws a RuntimeError.
 */
-#define mspp_fail(MESSAGE) throw psf::RuntimeError(MESSAGE)
+#define psf_fail(MESSAGE) throw psf::RuntimeError(MESSAGE)
 
 } /* namespace psf */
 #endif /* __ERROR_H__ */

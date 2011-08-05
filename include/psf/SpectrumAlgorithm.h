@@ -7,8 +7,8 @@
 #include <utility>
 #include <vector>
 
-#include <ms++/Log.h>
-#include <ms++/Error.h>
+#include <psf/Log.h>
+#include <psf/Error.h>
 
 namespace psf
 {
@@ -250,7 +250,7 @@ std::pair<FwdIter, FwdIter> findBump(FwdIter first, FwdIter last, Compare comp) 
 
     // Now let's go through the sequence element by element.
     while(onePastCurrentElement != onePastLastElement) {
-        mspp_invariant(std::distance(currentElement, onePastCurrentElement) == 1, "findBump(): Distance between current and next elment is not 1.");
+        psf_invariant(std::distance(currentElement, onePastCurrentElement) == 1, "findBump(): Distance between current and next elment is not 1.");
         
         /* Current element is smaller than its right neighbor. */      
         if(comp(*currentElement, *(onePastCurrentElement))) {
@@ -319,7 +319,7 @@ measureFullWidths(const MzExtractor& get_mz, const IntensityExtractor& get_int, 
     typedef typename MzExtractor::result_type Mz;
     typedef typename IntensityExtractor::result_type Intensity;
 
-    mspp_precondition(0. <= fraction && fraction <= 1., 
+    psf_precondition(0. <= fraction && fraction <= 1., 
         "measureFullWidths(): Parameter fraction out of required range.");
 
     // The result
@@ -347,7 +347,7 @@ measureFullWidths(const MzExtractor& get_mz, const IntensityExtractor& get_int, 
         }
         
         // calc full width if bump is low enough and has a minimal height
-        mspp_invariant(bump.first <= bump.second && bump.second < last, "Bump in illegal state.");
+        psf_invariant(bump.first <= bump.second && bump.second < last, "Bump in illegal state.");
         bumpHeight = get_int(*std::max_element(bump.first, bump.second + 1, comp));       
         if(SpectralPeak::lowness(get_int, bump.first, bump.second) >= requiredLowness && bumpHeight >= minimalPeakHeight) {
             // we don't have to try for exceptions here, because a bump fulfills the preconditions
@@ -370,7 +370,7 @@ measureFullWidths(const MzExtractor& get_mz, const IntensityExtractor& get_int, 
 template< typename FwdIter, typename IntensityExtractor >
 typename IntensityExtractor::result_type
 SpectralPeak::height(const IntensityExtractor& get_int, FwdIter firstElement, FwdIter lastElement) {
-    mspp_precondition(distance(firstElement, lastElement) >=0, "SpectralPeak::height(): Distance between first and last input element is not nonnegative.");
+    psf_precondition(distance(firstElement, lastElement) >=0, "SpectralPeak::height(): Distance between first and last input element is not nonnegative.");
     
     // Compare elements by intensity
     LessByExtractor<typename IntensityExtractor::element_type, IntensityExtractor> comp(get_int);
@@ -458,7 +458,7 @@ template< typename FwdIter, typename MzExtractor, typename IntensityExtractor >
 typename MzExtractor::result_type 
 SpectralPeak::
 fullWidthAtFractionOfMaximum(const MzExtractor& get_mz, const IntensityExtractor& get_int, FwdIter firstElement, FwdIter lastElement, const double fraction) {
-    mspp_precondition(0. <= fraction && fraction <= 1., "fullWidthAtFractionOfMaximum(): Fraction parameter out of range.");
+    psf_precondition(0. <= fraction && fraction <= 1., "fullWidthAtFractionOfMaximum(): Fraction parameter out of range.");
 
     /* Determine target intensity */
     // Compare elements by intensity
@@ -535,7 +535,7 @@ namespace
         if (get_mz(element1) == get_mz(element2)) {
             return get_mz(element2);
         } else {
-            mspp_invariant(get_int(element1) != get_int(element2), "interpolateElements(): Illegal abundance state: below < target && target <= above && above == below."); 
+            psf_invariant(get_int(element1) != get_int(element2), "interpolateElements(): Illegal abundance state: below < target && target <= above && above == below."); 
 
             // abundance = slope * mz + shift      
             double slope = 1.0 * (get_int(element2) - get_int(element1)) / (get_mz(element2) - get_mz(element1));

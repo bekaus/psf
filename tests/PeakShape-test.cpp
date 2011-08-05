@@ -1,7 +1,7 @@
 #include <cmath>
 #include <iostream>
 
-#include <ms++/Error.h>
+#include <psf/Error.h>
 #include "psf/PeakShape.h"
 
 #include "unittest.hxx"

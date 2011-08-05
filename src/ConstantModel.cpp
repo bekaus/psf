@@ -1,4 +1,4 @@
-#include <ms++/Error.h>
+#include <psf/Error.h>
 #include "psf/PeakParameter.h"
 
 namespace psf
@@ -8,11 +8,11 @@ unsigned int ConstantModel::numberOfParameters() {
 }
 
 void ConstantModel::setParameter(unsigned index, double value) {
-    mspp_precondition(index < numberOfParameters(), "ConstantModel::setParameter(): Parameter index out-of-range.");
+    psf_precondition(index < numberOfParameters(), "ConstantModel::setParameter(): Parameter index out-of-range.");
     a_ = value;
 }
 double ConstantModel::getParameter(unsigned index) {
-    mspp_precondition(index < numberOfParameters(), "ConstantModel::getParameter(): Parameter index out-of-range.");
+    psf_precondition(index < numberOfParameters(), "ConstantModel::getParameter(): Parameter index out-of-range.");
     return a_;
 }
 

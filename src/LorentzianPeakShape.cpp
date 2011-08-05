@@ -1,6 +1,6 @@
 #include <cmath>
 
-#include <ms++/Error.h>
+#include <psf/Error.h>
 #include "psf/PeakShape.h"
 
 using namespace psf;
@@ -16,14 +16,14 @@ double LorentzianPeakShape::getSupportThreshold() const {
 // construction
 LorentzianPeakShape::LorentzianPeakShape(const double fwhm, const double fwhmFactorForSupportThreshold) 
     : fwhm_(fwhm), fwhmFactorForSupportThreshold_(fwhmFactorForSupportThreshold) {
-    mspp_precondition(fwhm > 0, "LorentzianPeakShape::LorentzianPeakShape(): Parameter fwhm has to be positive.");
-    mspp_precondition(fwhmFactorForSupportThreshold > 0, "LorentzianPeakShape::LorentzianPeakShape(): fwhmFactorForSupportThreshold has to be positive.");
+    psf_precondition(fwhm > 0, "LorentzianPeakShape::LorentzianPeakShape(): Parameter fwhm has to be positive.");
+    psf_precondition(fwhmFactorForSupportThreshold > 0, "LorentzianPeakShape::LorentzianPeakShape(): fwhmFactorForSupportThreshold has to be positive.");
 }
 
 
 // setter/getter
 void LorentzianPeakShape::setFwhm(const double fwhm) {
-    mspp_precondition(fwhm > 0, "LorentzianPeakShape::LorentzianPeakShape(): Parameter fwhm has to be positive.");
+    psf_precondition(fwhm > 0, "LorentzianPeakShape::LorentzianPeakShape(): Parameter fwhm has to be positive.");
     fwhm_ = fwhm;
 }
 double LorentzianPeakShape::getFwhm() const {
@@ -31,7 +31,7 @@ double LorentzianPeakShape::getFwhm() const {
 }
 
 void LorentzianPeakShape::setFwhmFactorForSupportThreshold(const double factor) {
-    mspp_precondition(factor > 0, "LorentzianPeakShape::LorentzianPeakShape(): Parameter fwhmFactorForSupportThreshold has to be positive.");
+    psf_precondition(factor > 0, "LorentzianPeakShape::LorentzianPeakShape(): Parameter fwhmFactorForSupportThreshold has to be positive.");
     fwhmFactorForSupportThreshold_ = factor;
 }
 double LorentzianPeakShape::getFwhmFactorForSupportThreshold() const {

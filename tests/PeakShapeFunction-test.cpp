@@ -1,8 +1,8 @@
-#include <ms++/config.h>
+#include <psf/config.h>
 
 #include "unittest.hxx"
 
-#include "ms++/Log.h"
+#include "psf/Log.h"
 
 #include "psf/PeakShapeFunction.h"
 #include <psf/Spectrum.h>

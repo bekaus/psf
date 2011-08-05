@@ -4,9 +4,9 @@
 #include <cmath>
 #include <string>
 
-#include <ms++/config.h>
-#include <ms++/Error.h>
-#include <ms++/Log.h>
+#include <psf/config.h>
+#include <psf/Error.h>
+#include <psf/Log.h>
 
 #include "psf/PeakParameter.h"
 #include "psf/PeakShape.h"

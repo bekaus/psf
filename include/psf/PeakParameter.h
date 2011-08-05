@@ -440,9 +440,9 @@ public:
      *      be caused by an invalid ParameterModel.
      */
     double at(const double mz) const {
-        mspp_precondition(mz > 0, "PeakParameterFwhm::at(): Parameter mz has to be positive.");
+        psf_precondition(mz > 0, "PeakParameterFwhm::at(): Parameter mz has to be positive.");
         double fwhm = this->ParameterModel::at(mz);
-        mspp_postcondition(fwhm > 0, "PeakParameterFwhm::at(): Model returned negative or zero fwhm.");
+        psf_postcondition(fwhm > 0, "PeakParameterFwhm::at(): Model returned negative or zero fwhm.");
         return fwhm;
     }
 
@@ -583,7 +583,7 @@ template< typename MzExtractor >
 void PeakParameterFwhm<ParameterModel>::learn_(const std::vector<std::pair<typename MzExtractor::result_type, typename MzExtractor::result_type> >& pairs) {
     using namespace vigra;
     typedef std::vector<std::pair<typename MzExtractor::result_type, typename MzExtractor::result_type> > MzWidthPairs_;
-    mspp_precondition(pairs.empty() == false, "PeakParameterFwhm::learn_(): Called with empty input vector. This is not supposed to happen. A bug in the code preceding the call of learn_ probably caused it.");
+    psf_precondition(pairs.empty() == false, "PeakParameterFwhm::learn_(): Called with empty input vector. This is not supposed to happen. A bug in the code preceding the call of learn_ probably caused it.");
 
     // We now fit the PeakParameterModel to the spectrum using linear regression.    
     // We minimize the residue |A*x - b|^2.
@@ -599,7 +599,7 @@ void PeakParameterFwhm<ParameterModel>::learn_(const std::vector<std::pair<typen
     // Calling it here while trying to learn this non-existing parameters would cause a
     // desirable compile time error. Nevertheless, we have to guard against wrongly implemented
     // ParameterModels.
-    mspp_invariant(this->ParameterModel::numberOfParameters() > 0, "PeakParameterFwhm::learn_(): Number of model parameters is not greater than zero.");
+    psf_invariant(this->ParameterModel::numberOfParameters() > 0, "PeakParameterFwhm::learn_(): Number of model parameters is not greater than zero.");
     
     // A: #rows is number of measured pairs; #columns is dimension of parameter space
     linalg::Matrix<double> A(pairs.size(), this->ParameterModel::numberOfParameters());
@@ -614,7 +614,7 @@ void PeakParameterFwhm<ParameterModel>::learn_(const std::vector<std::pair<typen
 
         // copy the slope into a row of A
         // (we ignore the bias, because it can't be optimized.)
-        mspp_invariant((slope.size()-1) == static_cast<GeneralizedSlope::size_type>(A.columnCount()), "PeakParameterFwhm::learn_(): Generalized slope has different dimension than the space, it is living in.");        
+        psf_invariant((slope.size()-1) == static_cast<GeneralizedSlope::size_type>(A.columnCount()), "PeakParameterFwhm::learn_(): Generalized slope has different dimension than the space, it is living in.");        
         for(linalg::Matrix<double>::difference_type_1 column = 0; column < A.columnCount(); ++column) {      
             A(static_cast<linalg::Matrix<double>::difference_type_1>(pairIndex), column) = slope.at(static_cast<GeneralizedSlope::size_type>(column));   
         }       
@@ -636,7 +636,7 @@ void PeakParameterFwhm<ParameterModel>::learn_(const std::vector<std::pair<typen
     for(linalg::Matrix<double>::difference_type_1 index = 0; index < x.rowCount(); ++index) {
         PSF_LOG(logDEBUG2) << "PeakParameterFwhm::learn_(): Parameter " << index << " found: " <<  x(index, 0);
         
-        mspp_invariant(index >= 0, "PeakParameterFwhm::learn_(): index may not be negative before calling setParameter(index,0).");
+        psf_invariant(index >= 0, "PeakParameterFwhm::learn_(): index may not be negative before calling setParameter(index,0).");
         this->ParameterModel::setParameter(index, x(static_cast<unsigned>(index), 0));    
     }
 }

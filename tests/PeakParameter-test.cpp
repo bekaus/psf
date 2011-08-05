@@ -1,7 +1,7 @@
 #include <iostream>
 
-#include <ms++/config.h>
-#include <ms++/Error.h>
+#include <psf/config.h>
+#include <psf/Error.h>
 #include <psf/PeakParameter.h>
 #include <psf/Spectrum.h>
 

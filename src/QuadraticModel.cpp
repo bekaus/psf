@@ -9,7 +9,7 @@ unsigned int QuadraticModel::numberOfParameters() {
 }
 
 void QuadraticModel::setParameter(unsigned index, double value) {
-    mspp_precondition(index < numberOfParameters(), "QuadraticModel::setParameter(): Parameter index out-of-range.");
+    psf_precondition(index < numberOfParameters(), "QuadraticModel::setParameter(): Parameter index out-of-range.");
     if(index == 0) {    
         a_ = value;
     }
@@ -18,7 +18,7 @@ void QuadraticModel::setParameter(unsigned index, double value) {
     }
 }
 double QuadraticModel::getParameter(unsigned index) {
-    mspp_precondition(index < numberOfParameters(), "QuadraticModel::getParameter(): Parameter index out-of-range.");
+    psf_precondition(index < numberOfParameters(), "QuadraticModel::getParameter(): Parameter index out-of-range.");
     if(index == 0) {    
         return a_;
     }
