@@ -16,7 +16,7 @@
  *
  *
  * @section usage Usage
- * @c ms++ provides logging to @c stderr via the @c PSF_LOG macro:
+ * @c psf provides logging to @c stderr via the @c PSF_LOG macro:
  * @code
  * PSF_LOG(logINFO) << "Hello" << username << "no endl, will be appended automatically";
  * @endcode
@@ -384,14 +384,14 @@ class FILELOG_DECLSPEC FILELog : public Log<Output2FILE> {};
 // We have to do the following yaketiyak, because the standard <ctime> is not thread safe.
 // (It is using static internal buffers in some functions like ctime() .)
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32__)
-    } // Temporarily close ms namespace to include the external Windows headers.
+    } // Temporarily close psf namespace to include the external Windows headers.
 
     // winsocks2.h has always to be included BEFORE windows.h
 	// We don't use winsocks2 here, but it may be used in a file including this header.
 	#include <winsock2.h>
 	#include <windows.h>
 
-// Reopen the ms namespace.
+// Reopen the psf namespace.
 namespace psf {
 inline std::string nowTime()
 {
@@ -419,7 +419,7 @@ inline std::string nowTime()
 }
 
 #else
-} // Temporarily close ms namespace to inclue header files.
+} // Temporarily close psf namespace to inclue header files.
 #include <sys/time.h>
 
 // Reopen namespace psf.

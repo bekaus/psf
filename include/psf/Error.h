@@ -12,7 +12,7 @@ namespace psf
 //////////////////
 
 /**
-*   Base class for all ms++ exceptions.
+*   Base class for all psf exceptions.
 *
 */
 class Exception : public std::exception
