@@ -1,7 +1,7 @@
 #ifndef __PEAKSHAPE_H__
 #define __PEAKSHAPE_H__
 
-#include <ms++/config.h>
+#include <psf/config.h>
 
 // for friend declaration further below
 struct peakshapeTestSuite;

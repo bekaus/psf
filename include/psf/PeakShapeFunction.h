@@ -31,7 +31,7 @@
  * a peakshape function.
  *
  *
- * @section typesofpeakshapefunctions Types of Peakshape Functions in ms++
+ * @section typesofpeakshapefunctions Types of Peakshape Functions in psf
  *
  * @subsection boxpsf Box
  * The box peakshape function is the rectangular function with a fixed width. It is implemented and used in the
