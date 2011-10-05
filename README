@@ -1,11 +1,11 @@
-Peak Shape Function Framework
------------------------------
+libpsf: A C++ Peak Shape Function Framework
+-------------------------------------------
 
 Compiles on Windows Server 2008. Tested on Ubuntu 8.04, OpenSUSE 11.1 and Fedora
 11.
 
 Dependencies:
-A current development snapshot of vigra.
+A current development snapshot of vigra: http://hci.iwr.uni-heidelberg.de/vigra/
 
 How to build:
 ./cmake .
