@@ -152,6 +152,15 @@
     ENDIF(BUILD_TESTING)
 
 ##
+# doxygen support
+##
+    CONFIGURE_FILE(${PSF_SOURCE_DIR}/doc/Doxyfile.cmake
+        ${PSF_BINARY_DIR}/doc/Doxyfile
+        @ONLY IMMEDIATE
+        )
+    FIND_PACKAGE(Doxygen)
+    ADD_CUSTOM_TARGET(doc COMMAND ${DOXYGEN} ${PSF_BINARY_DIR}/doc/Doxyfile)
+##
 # summary
 ##
     MESSAGE(STATUS)
